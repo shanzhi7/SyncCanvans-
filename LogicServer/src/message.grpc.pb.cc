@@ -2,8 +2,8 @@
 // If you make any local change, they will be lost.
 // source: message.proto
 
-#include "GateServer/message.pb.h"
-#include "GateServer/message.grpc.pb.h"
+#include "LogicServer/message.pb.h"
+#include "LogicServer/message.grpc.pb.h"
 
 #include <functional>
 #include <grpcpp/support/async_stream.h>

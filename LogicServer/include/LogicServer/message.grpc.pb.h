@@ -4,7 +4,7 @@
 #ifndef GRPC_message_2eproto__INCLUDED
 #define GRPC_message_2eproto__INCLUDED
 
-#include "message.pb.h"
+#include "LogicServer/message.pb.h"
 
 #include <functional>
 #include <grpcpp/generic/async_generic_service.h>

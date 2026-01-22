@@ -79,6 +79,7 @@ void RegisterWidget::initToolButton()
 
 void RegisterWidget::initHandersMap()
 {
+    //注册获取验证码回包逻辑
     _handlers_map.insert(ReqId::ID_GET_VERIFY_CODE,[this](QJsonObject jsonObj){
         int error = jsonObj["error"].toInt();
         if(error != ErrorCodes::SUCCESS)    //错误
@@ -86,11 +87,27 @@ void RegisterWidget::initHandersMap()
             TipWidget::showTip(ui->title_lbl,"错误！请检查输入的内容");
             return;
         }
+        TipWidget::showTip(ui->title_lbl,"验证码已发送到邮箱,注意查收");
         auto email = jsonObj["email"].toString();
         QString fromServer = jsonObj["server"].toString();
-        qDebug()<<"email is "<<email<<"  from server: "<<fromServer;
+        qDebug()<<"email is "<<email<<"  from server: "<<fromServer<<"reqid is "<<"get verifycode";
 
-        //todo 切换登录页面
+    });
+
+    //注册用户回包逻辑
+    _handlers_map.insert(ReqId::ID_REGISTER,[this](QJsonObject jsonObj){
+        int error = jsonObj["error"].toInt();
+        if(error != ErrorCodes::SUCCESS)    //错误
+        {
+            TipWidget::showTip(ui->title_lbl,"错误！请检查输入的内容");
+            return;
+        }
+        TipWidget::showTip(ui->title_lbl,"用户注册成功");
+        auto email = jsonObj["email"].toString();
+        QString fromServer = jsonObj["server"].toString();
+        qDebug()<<"email is "<<email<<"  from server: "<<fromServer<<"reqid is "<<"user register";
+
+        //todo 页面跳转
     });
 }
 
@@ -164,6 +181,30 @@ void RegisterWidget::on_register_btn_clicked()
             return;
         }
     }
+
+    //密码加密
+    QByteArray passwordByte;
+    QString pas= ui->password_edit->text();
+    passwordByte.append(pas.toUtf8());
+    QByteArray hash = QCryptographicHash::hash(passwordByte,QCryptographicHash::Sha512);
+    QString password_sha512 = hash.toHex();
+
+    //确认密码
+    QByteArray confirmByte;
+    QString con= ui->confirm_edit->text();
+    confirmByte.append(con.toUtf8());
+    QByteArray hash_con = QCryptographicHash::hash(passwordByte,QCryptographicHash::Sha512);
+    QString confirm_sha512 = hash_con.toHex();
+
+    //发送http请求，注册账号
+    QJsonObject json_obj;
+    json_obj["name"] = ui->nick_edit->text();
+    json_obj["email"] = ui->email_edit->text();
+    json_obj["password"] = password_sha512;
+    json_obj["confirm"] = confirm_sha512;
+    json_obj["verifycode"] = ui->verifycode_edit->text();
+    HttpMgr::getInstance()->postHttpRequest(QUrl(gate_url_prefix + "/user_register"),json_obj,
+                                            ReqId::ID_REGISTER,Modules::MOD_REGISTER);
 }
 
 void RegisterWidget::slot_reg_mod_finish(ReqId reqid, QString res, ErrorCodes err)

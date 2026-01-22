@@ -2,6 +2,7 @@
 #include "GateServer/HttpConnection.h"
 #include "GateServer/const.h"
 #include "GateServer/VerifyGrpcClient.h"
+#include "GateServer/LogicGrpcClient.h"
 #include "GateServer//message.pb.h"
 #include "GateServer//message.grpc.pb.h"
 
@@ -19,6 +20,7 @@ LogicSystem::LogicSystem()	//构造函数
 		}
 		});
 
+	//注册获取验证码请求
 	RegPost("/get_verifycode", [](std::shared_ptr<HttpConnection> connection) {
 		auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());	//获取请求body
 		std::cout << "receive body is " << body_str << std::endl;
@@ -28,6 +30,15 @@ LogicSystem::LogicSystem()	//构造函数
 		Json::Value src_root;
 		bool parse_success = reader.parse(body_str, src_root);
 
+		if (!parse_success)	//解析失败
+		{
+			std::cout << "Failed to parse JSON data!" << std::endl;
+			root["error"] = message::ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			boost::beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
 		auto email = src_root["email"].asString();
 		auto name = src_root["user"].asString();
 		auto pwd = src_root["password"].asString();
@@ -36,16 +47,7 @@ LogicSystem::LogicSystem()	//构造函数
 		if (pwd != confirm)	//判断两次输入的密码是否一致
 		{
 			std::cout << "两次密码不一致" << std::endl;
-			root["error"] = ErrorCodes::PasswdErr;
-			std::string jsonstr = root.toStyledString();
-			boost::beast::ostream(connection->_response.body()) << jsonstr;
-			return true;
-		}
-
-		if (!parse_success)	//解析失败
-		{
-			std::cout << "Failed to parse JSON data!" << std::endl;
-			root["error"] = ErrorCodes::Error_Json;
+			root["error"] = message::ErrorCodes::PasswdErr;
 			std::string jsonstr = root.toStyledString();
 			boost::beast::ostream(connection->_response.body()) << jsonstr;
 			return true;
@@ -53,15 +55,16 @@ LogicSystem::LogicSystem()	//构造函数
 		if (!src_root.isMember("email"))
 		{
 			std::cout << "Failed to parse JSON data!" << std::endl;
-			root["error"] = ErrorCodes::Error_Json;
+			root["error"] = message::ErrorCodes::Error_Json;
 			std::string jsonstr = root.toStyledString();
 			boost::beast::ostream(connection->_response.body()) << jsonstr;
 			return true;
 		}
 		std::cout << "client email is " << email << std::endl;
-		GetVarifyRsp rsp = VerifyGrpcClient::getInstance()->GetVarifyCode(email); //向grpc服务发送获取验证码请求
 
-		//std::cout << "grpcServer: Verification code sent successfully, the target email is: " << rsp.email()<<std::endl;
+		//向grpc服务发送获取验证码请求
+		GetVarifyRsp rsp = VerifyGrpcClient::getInstance()->GetVarifyCode(email);
+
 		if (rsp.error() != 0)//验证码发送失败
 		{
 			std::cout << "get Verification code is Failed " << std::endl;
@@ -77,6 +80,63 @@ LogicSystem::LogicSystem()	//构造函数
 		std::string jsonstr = root.toStyledString();
 		boost::beast::ostream(connection->_response.body()) << jsonstr;
 		return true;
+		});
+
+    //注册注册请求
+    RegPost("/user_register", [](std::shared_ptr<HttpConnection> connection) { 
+        auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());
+        std::cout << "receive body is " << body_str << std::endl;
+        connection->_response.set(boost::beast::http::field::content_type,"application/json");
+        Json::Value root;
+        Json::Reader reader;
+        Json::Value src_root;
+        bool parse_success = reader.parse(body_str, src_root);
+
+		// 只有解析成功了，才往下走
+		if (!parse_success)
+		{
+			std::cout << "Failed to parse JSON data!" << std::endl;
+			root["error"] = message::ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			boost::beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
+        auto email = src_root["email"].asString();
+        auto name = src_root["name"].asString();
+        auto pwd = src_root["password"].asString();
+        auto confirm = src_root["confirm"].asString();
+        if (pwd != confirm)
+        {
+            std::cout << "两次密码不一致" << std::endl;
+            root["error"] = message::ErrorCodes::PasswdErr;
+            std::string jsonstr = root.toStyledString();
+            boost::beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
+        if (!src_root.isMember("email"))
+        {
+            std::cout << "Failed to parse JSON data!" << std::endl;
+            root["error"] = message::ErrorCodes::Error_Json;
+            std::string jsonstr = root.toStyledString();
+            boost::beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
+        std::cout << "client email is " << email << std::endl;
+        RegisterReq req;
+        req.set_email(email);
+        req.set_name(name);
+        req.set_passwd(pwd);
+		req.set_confirm_pwd(confirm);
+        req.set_varifycode(src_root["verifycode"].asString());
+        RegisterRsp rsp = LogicGrpcClient::getInstance()->RegisterUser(req);
+        root["error"] = rsp.error();
+        root["email"] = src_root["email"];
+        root["server"] = "GateServer";
+        std::string jsonstr = root.toStyledString();
+        boost::beast::ostream(connection->_response.body()) << jsonstr;
+        return true;
+
 		});
 }
 

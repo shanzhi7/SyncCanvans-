@@ -1,5 +1,5 @@
 #pragma once
-#include "Singleton.h"
+#include "LogicServer/Singleton.h"
 #include <sw/redis++/redis++.h>
 #include <string>
 #include <iostream>
@@ -17,7 +17,7 @@ public:
 	bool Connect(const std::string& host, int port,const std::string& pwd);
 
 	bool Get(const std::string& key, std::string& value);			//获取key对应的value
-    bool Set(const std::string& key, const std::string& value, int timeout = 0);		//设置key对应的value
+	bool Set(const std::string& key, const std::string& value, int timeout = 0);	//设置key对应的value默认为 0（代表永不过期）
     bool Del(const std::string& key);								//删除key
     bool ExistsKey(const std::string& key);							//判断key是否存在
 

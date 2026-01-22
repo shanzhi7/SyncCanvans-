@@ -1,20 +1,5 @@
 #pragma once
 #include <functional>
-#include "GateServer/message.pb.h"
-#include "GateServer/message.grpc.pb.h"
-#include <grpc/grpc.h>
-
-using grpc::Channel;			//通道
-using grpc::Status;				//状态
-using grpc::ClientContext;		//客户端上下文
-
-using message::GetVarifyReq;
-using message::GetVarifyRsp;
-using message::VarifyService;
-
-using message::RegisterReq;
-using message::RegisterRsp;
-using message::LogicService;
 
 //enum ErrorCodes
 //{

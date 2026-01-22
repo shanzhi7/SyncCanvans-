@@ -1,5 +1,5 @@
-#include "GateServer/RedisMgr.h"
-#include "GateServer/ConfigMgr.h"
+#include "LogicServer/RedisMgr.h"
+#include "LogicServer/ConfigMgr.h"
 
 RedisMgr::RedisMgr()
 {
@@ -7,7 +7,7 @@ RedisMgr::RedisMgr()
     auto& cfg = ConfigMgr::Inst();
     std::string host = cfg["Redis"]["Host"];
     int port = std::stoi(cfg["Redis"]["Port"]);
-    std::string pwd = cfg["Redis"]["Passwd"];
+    std::string pwd = cfg["Redis"]["Password"];
 
     Connect(host, port, pwd);
 }

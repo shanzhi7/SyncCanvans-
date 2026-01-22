@@ -3,7 +3,7 @@
 // source: message.proto
 // Protobuf C++ Version: 5.29.5
 
-#include "GateServer/message.pb.h"
+#include "LogicServer/message.pb.h"
 
 #include <algorithm>
 #include <type_traits>

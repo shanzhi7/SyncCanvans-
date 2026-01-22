@@ -42,8 +42,8 @@ private:
 signals:
     void switchLogin();     //发送切换登录界面按钮
 private slots:
-    void on_get_verify_btn_clicked();
-    void on_register_btn_clicked();
+    void on_get_verify_btn_clicked();       //获取验证码槽函数
+    void on_register_btn_clicked();         //注册按钮槽函数
 
     void slot_reg_mod_finish(ReqId,QString,ErrorCodes);     //回包槽函数
 };
