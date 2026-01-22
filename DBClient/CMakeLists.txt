@@ -33,6 +33,9 @@ qt_add_executable(DBClient
     httpmgr.h httpmgr.cpp
     tipwidget.h tipwidget.cpp
     config.ini
+    userdata.h
+    userdata.cpp
+    usermgr.h usermgr.cpp
 )
 
 # ---> 请添加这段代码 <---

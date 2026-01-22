@@ -1,0 +1,27 @@
+/***********************************************************************************
+*
+* @file         usermgr.h
+* @brief        当前用户管理类
+*
+* @author       shanzhi
+* @date         2026/01/22
+* @history
+***********************************************************************************/
+#ifndef USERMGR_H
+#define USERMGR_H
+
+#include "userdata.h"
+#include "singleton.h"
+#include <memory>
+class UserMgr : public Singleton<UserMgr>,public std::enable_shared_from_this<UserMgr>
+{
+public:
+    UserMgr();
+
+    std::shared_ptr<UserInfo> getMyInfo();
+
+private:
+    std::shared_ptr<UserInfo> _my_info;         //当前客户端用户信息
+};
+
+#endif // USERMGR_H
