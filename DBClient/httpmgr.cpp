@@ -47,9 +47,9 @@ void HttpMgr::postHttpRequest(QUrl url, QJsonObject json, ReqId reqid, Modules m
 
 void HttpMgr::slot_http_finished(ReqId reqid, QString res, ErrorCodes err, Modules mod)
 {
+    //发送信号通知指定模块http响应结束
     if(mod == Modules::MOD_REGISTER)
     {
-        //发送信号通知指定模块http响应结束
         emit sig_reg_mod_finish(reqid,res,err);
     }
     if(mod == Modules::MOD_RESET)

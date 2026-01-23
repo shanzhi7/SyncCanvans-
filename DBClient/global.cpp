@@ -38,3 +38,4 @@ std::function<QPixmap (const QPixmap& src, const QColor &color)> applyColor = []
     return result;
 };
 
+

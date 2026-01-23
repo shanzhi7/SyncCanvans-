@@ -30,6 +30,7 @@ extern std::function<void(QWidget*)> repolish;  //用于刷新qss样式
 
 extern std::function<QPixmap(const QPixmap& src, const QColor& color)> applyColor;   //改变png图标颜色
 
+
 enum class ReqId{
     ID_GET_VERIFY_CODE = 1001,                  //获取验证码
     ID_REGISTER = 1002,                         //注册账号

@@ -31,6 +31,7 @@ public:
 
 private:
     QLabel *m_label; // 内部用于显示文字的标签
+    static QPointer<TipWidget> s_currentTip; // 记录当前正在显示的气泡
 };
 
 #endif // TIPWIDGET_H

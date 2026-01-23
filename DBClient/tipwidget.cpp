@@ -5,7 +5,8 @@
 #include <QTimer>
 #include <QApplication>
 #include <QDebug>
-
+#include <QPointer>
+QPointer<TipWidget> TipWidget::s_currentTip = nullptr;
 // 构造函数实现
 TipWidget::TipWidget(QWidget *parent) : QWidget(parent)
 {
@@ -54,10 +55,19 @@ TipWidget::TipWidget(QWidget *parent) : QWidget(parent)
 void TipWidget::showTip(QWidget *target, const QString &text)
 {
     if (!target) return;
+    //如果旧的气泡还存在，立即关闭它
+    if (s_currentTip)
+    {
+        s_currentTip->close();
+    }
 
     // 创建提示窗口，父对象设为 target 的顶层窗口，防止内存泄漏
     // (虽然有 DeleteOnClose，但指定父对象是好习惯)
+
     TipWidget *tip = new TipWidget(target->window());
+
+    // 记录为当前气泡
+    s_currentTip = tip;
 
     // 设置文字
     tip->m_label->setText(text);

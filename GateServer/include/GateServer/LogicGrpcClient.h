@@ -14,6 +14,10 @@ using grpc::ClientContext;		//上下文
 using message::RegisterReq;
 using message::RegisterRsp;
 using message::LogicService;
+using message::ResetPasswordReq;
+using message::ResetPasswordRsp;
+using message::LoginReq;
+using message::LoginRsp;
 
 class LogicGrpcClient : public Singleton<LogicGrpcClient>
 {
@@ -21,7 +25,8 @@ class LogicGrpcClient : public Singleton<LogicGrpcClient>
 public:
     ~LogicGrpcClient() {};      //析构函数
 
-    RegisterRsp RegisterUser(RegisterReq req);
+    RegisterRsp RegisterUser(RegisterReq req);              //注册用户
+    ResetPasswordRsp ResetPassword(ResetPasswordReq req);   //重置密码
 
 private:
     LogicGrpcClient();           //私有化构造函数

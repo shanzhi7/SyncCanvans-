@@ -40,3 +40,25 @@ RegisterRsp LogicGrpcClient::RegisterUser(RegisterReq req)
         return rsp;
     }
 }
+
+ResetPasswordRsp LogicGrpcClient::ResetPassword(ResetPasswordReq req)
+{
+    ClientContext context;  // 上下文：用于设置超时、获取元数据等
+    ResetPasswordRsp rsp;        // 响应：用于接收 LogicServer 的返回值
+    grpc::Status status;    // 状态：用于判断 RPC 调用本身是否成功
+
+    // 调用 LogicServer 的 ResetPassword 方法
+    status = _stub->ResetPassword(&context, req, &rsp);
+    if (status.ok())
+    {
+        // RPC 调用成功，直接返回 LogicServer 给出的结果
+        return rsp;
+    }
+    else
+    {
+        // RPC 调用失败（网络问题、服务器挂了等）
+        // 设置一个错误码，告诉上层是 RPC 这一层出问题了
+        rsp.set_error(message::ErrorCodes::RPCFailed);
+        return rsp;
+    }
+}

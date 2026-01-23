@@ -40,6 +40,13 @@ MainWindow::MainWindow(QWidget *parent)
     register_widget = new RegisterWidget(this);
     register_widget->setAttribute(Qt::WA_TranslucentBackground);    //设置透明背景
     register_widget->hide();
+    //初始化注册窗口 end
+
+    //初始化重置密码窗口 begin
+    reset_widget = new ResetWidget(this);
+    reset_widget->setAttribute(Qt::WA_TranslucentBackground);       //设置透明背景
+    reset_widget->hide();
+    //初始化重置密码窗口 end
 
     //连接点击欢迎页切换登录窗口
     connect(welcome_widget,&WelcomeWidget::switchLogin,this,&MainWindow::slotSwitchLogin);
@@ -52,6 +59,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     //连接点击返回登录按钮切换登录页面
     connect(register_widget,&RegisterWidget::switchLogin,this,&MainWindow::slotSwitchLoginFromReg);
+
+    //连接重置密码界面点击返回登录页面
+    connect(reset_widget,&ResetWidget::switchLogin,this,&MainWindow::slotSwitchLoginFromReset);
+
+    //连接登录界面点击切换重置密码页面
+    connect(login_widget,&LoginWidget::switchReset,this,&MainWindow::slotSwitchResetFromLogin);
 }
 
 MainWindow::~MainWindow()
@@ -194,4 +207,32 @@ void MainWindow::slotSwitchLoginFromReg()
     setCentralWidget(login_widget);
     this->setFixedSize(login_widget->size());
     login_widget->show();
+}
+
+void MainWindow::slotSwitchLoginFromReset()
+{
+    // 取出当前中央部件（reset_widget）并保存，不销毁
+    reset_widget = qobject_cast<ResetWidget*>(takeCentralWidget());
+    if (reset_widget)
+    {
+        reset_widget->hide(); // 隐藏注册窗口
+    }
+    // 设置登录密码窗口为新的中央部件
+    setCentralWidget(login_widget);
+    this->setFixedSize(login_widget->size());
+    login_widget->show();
+}
+
+void MainWindow::slotSwitchResetFromLogin()
+{
+    // 取出当前中央部件（login_widget）并保存，不销毁
+    login_widget = qobject_cast<LoginWidget*>(takeCentralWidget());
+    if (login_widget)
+    {
+        login_widget->hide(); // 隐藏注册窗口
+    }
+    // 设置重置密码窗口为新的中央部件
+    setCentralWidget(reset_widget);
+    this->setFixedSize(reset_widget->size());
+    reset_widget->show();
 }

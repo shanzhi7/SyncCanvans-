@@ -42,21 +42,24 @@ RegisterWidget::~RegisterWidget()
 
 void RegisterWidget::initToolButton()
 {
-    ui->passworld_tool->setIcon(QIcon(":/res/visible.png"));
-    ui->confirm_tool->setIcon(QIcon(":/res/visible.png"));
+    ui->password_edit->setEchoMode(QLineEdit::Password);
+    ui->confirm_edit->setEchoMode(QLineEdit::Password);
 
-    connect(ui->passworld_tool,&QToolButton::clicked,this,[=](){
+    ui->password_tool->setIcon(QIcon(":/res/unvisible.png"));
+    ui->confirm_tool->setIcon(QIcon(":/res/unvisible.png"));
+
+    connect(ui->password_tool,&QToolButton::clicked,this,[=](){
         if (ui->password_edit->echoMode() == QLineEdit::Password)
         {
             // 切换为明文
             ui->password_edit->setEchoMode(QLineEdit::Normal);
-            ui->passworld_tool->setIcon(QIcon(":/res/visible.png")); // 换成睁眼
+            ui->password_tool->setIcon(QIcon(":/res/visible.png")); // 换成睁眼
         }
         else
         {
             // 切换为密文
             ui->password_edit->setEchoMode(QLineEdit::Password);
-            ui->passworld_tool->setIcon(QIcon(":/res/unvisible.png")); // 换成闭眼
+            ui->password_tool->setIcon(QIcon(":/res/unvisible.png")); // 换成闭眼
         }
     });
 
@@ -107,7 +110,7 @@ void RegisterWidget::initHandersMap()
         QString fromServer = jsonObj["server"].toString();
         qDebug()<<"email is "<<email<<"  from server: "<<fromServer<<"reqid is "<<"user register";
 
-        //todo 页面跳转
+        //页面跳转到登录页面
     });
 }
 
@@ -193,7 +196,7 @@ void RegisterWidget::on_register_btn_clicked()
     QByteArray confirmByte;
     QString con= ui->confirm_edit->text();
     confirmByte.append(con.toUtf8());
-    QByteArray hash_con = QCryptographicHash::hash(passwordByte,QCryptographicHash::Sha512);
+    QByteArray hash_con = QCryptographicHash::hash(confirmByte,QCryptographicHash::Sha512);
     QString confirm_sha512 = hash_con.toHex();
 
     //发送http请求，注册账号

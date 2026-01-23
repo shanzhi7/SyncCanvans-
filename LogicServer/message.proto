@@ -46,6 +46,9 @@ service LogicService
     
     // 登录账号
     rpc LoginUser (LoginReq) returns (LoginRsp) {}
+
+    // 重置密码
+    rpc ResetPassword (ResetPasswordReq) returns (ResetPasswordRsp) {}
 }
 
 // --- 注册相关消息 ---
@@ -62,6 +65,20 @@ message RegisterRsp
 {
     int32 error = 1;         // 错误码
     int32 uid = 2;           // 注册成功后返回的新用户ID
+}
+
+// 重置密码
+message ResetPasswordReq
+{
+    string email = 1;        // 邮箱
+    string varifycode = 2;   // 验证码
+    string passwd = 3;       // 新密码
+    string confirm_pwd = 4;  // 确认新密码
+}
+
+message ResetPasswordRsp
+{
+    int32 error = 1;         // 错误码
 }
 
 // --- 登录相关消息 ---

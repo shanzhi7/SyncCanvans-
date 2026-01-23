@@ -102,6 +102,17 @@ LogicSystem::LogicSystem()	//构造函数
 			return true;
 		}
 
+		// 判断是否缺少必要字段
+		if(!src_root.isMember("email") || !src_root.isMember("name") || !src_root.isMember("password")
+			|| !src_root.isMember("confirm") || !src_root.isMember("verifycode"))
+		{
+			std::cout << "[GateServer] Missing required JSON fields!" << std::endl;
+			root["error"] = message::ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			boost::beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
         auto email = src_root["email"].asString();
         auto name = src_root["name"].asString();
         auto pwd = src_root["password"].asString();
@@ -114,15 +125,8 @@ LogicSystem::LogicSystem()	//构造函数
             boost::beast::ostream(connection->_response.body()) << jsonstr;
             return true;
         }
-        if (!src_root.isMember("email"))
-        {
-            std::cout << "Failed to parse JSON data!" << std::endl;
-            root["error"] = message::ErrorCodes::Error_Json;
-            std::string jsonstr = root.toStyledString();
-            boost::beast::ostream(connection->_response.body()) << jsonstr;
-            return true;
-        }
-        std::cout << "client email is " << email << std::endl;
+
+		std::cout << "[GateServer] Client email is " << email << std::endl;
         RegisterReq req;
         req.set_email(email);
         req.set_name(name);
@@ -137,6 +141,60 @@ LogicSystem::LogicSystem()	//构造函数
         boost::beast::ostream(connection->_response.body()) << jsonstr;
         return true;
 
+		});
+
+	//注册重置密码请求
+    RegPost("/reset_password", [](std::shared_ptr<HttpConnection> connection) { 
+        auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());
+        std::cout << "receive body is " << body_str << std::endl;
+        connection->_response.set(boost::beast::http::field::content_type,"application/json");
+        Json::Value root;
+        Json::Reader reader;
+        Json::Value src_root;
+        bool parse_success = reader.parse(body_str, src_root);
+        if (!parse_success)
+		{
+			std::cout << "Failed to parse JSON data!" << std::endl;
+			root["error"] = message::ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			boost::beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+		if (!src_root.isMember("email") || !src_root.isMember("verifycode") ||
+			!src_root.isMember("password") || !src_root.isMember("confirm"))
+		{
+			std::cout << "[GateServer] Missing required JSON fields!" << std::endl;
+			root["error"] = message::ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			boost::beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
+        auto email = src_root["email"].asString();
+        auto verifycode = src_root["verifycode"].asString();
+        auto pwd = src_root["password"].asString();
+        auto confirm = src_root["confirm"].asString();
+        if (pwd != confirm)
+        {
+            std::cout << "两次密码不一致" << std::endl;
+            root["error"] = message::ErrorCodes::PasswdErr;
+            std::string jsonstr = root.toStyledString();
+            boost::beast::ostream(connection->_response.body()) << jsonstr;
+            return true;
+        }
+		std::cout << "[GateServer] Client email is " << email << std::endl;
+        ResetPasswordReq req;
+        req.set_email(email);
+        req.set_varifycode(verifycode);
+        req.set_passwd(pwd);
+        req.set_confirm_pwd(confirm);
+        ResetPasswordRsp rsp = LogicGrpcClient::getInstance()->ResetPassword(req);
+        root["error"] = rsp.error();
+        root["email"] = src_root["email"];
+        root["server"] = "GateServer";
+        std::string jsonstr = root.toStyledString();
+        boost::beast::ostream(connection->_response.body()) << jsonstr;
+        return true;
 		});
 }
 

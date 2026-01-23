@@ -85,6 +85,7 @@ VarifyService::Service::~Service() {
 static const char* LogicService_method_names[] = {
   "/message.LogicService/RegisterUser",
   "/message.LogicService/LoginUser",
+  "/message.LogicService/ResetPassword",
 };
 
 std::unique_ptr< LogicService::Stub> LogicService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -96,6 +97,7 @@ std::unique_ptr< LogicService::Stub> LogicService::NewStub(const std::shared_ptr
 LogicService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_RegisterUser_(LogicService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_LoginUser_(LogicService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ResetPassword_(LogicService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status LogicService::Stub::RegisterUser(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::message::RegisterRsp* response) {
@@ -144,6 +146,29 @@ void LogicService::Stub::async::LoginUser(::grpc::ClientContext* context, const 
   return result;
 }
 
+::grpc::Status LogicService::Stub::ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::message::ResetPasswordRsp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::ResetPasswordReq, ::message::ResetPasswordRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ResetPassword_, context, request, response);
+}
+
+void LogicService::Stub::async::ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::ResetPasswordReq, ::message::ResetPasswordRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ResetPassword_, context, request, response, std::move(f));
+}
+
+void LogicService::Stub::async::ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ResetPassword_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::ResetPasswordRsp>* LogicService::Stub::PrepareAsyncResetPasswordRaw(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::ResetPasswordRsp, ::message::ResetPasswordReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ResetPassword_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::ResetPasswordRsp>* LogicService::Stub::AsyncResetPasswordRaw(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncResetPasswordRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 LogicService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       LogicService_method_names[0],
@@ -165,6 +190,16 @@ LogicService::Service::Service() {
              ::message::LoginRsp* resp) {
                return service->LoginUser(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      LogicService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< LogicService::Service, ::message::ResetPasswordReq, ::message::ResetPasswordRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](LogicService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::message::ResetPasswordReq* req,
+             ::message::ResetPasswordRsp* resp) {
+               return service->ResetPassword(ctx, req, resp);
+             }, this)));
 }
 
 LogicService::Service::~Service() {
@@ -178,6 +213,13 @@ LogicService::Service::~Service() {
 }
 
 ::grpc::Status LogicService::Service::LoginUser(::grpc::ServerContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status LogicService::Service::ResetPassword(::grpc::ServerContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response) {
   (void) context;
   (void) request;
   (void) response;

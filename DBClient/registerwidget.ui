@@ -349,7 +349,13 @@ QLineEdit:focus {
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="passworld_tool">
+           <widget class="QToolButton" name="password_tool">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true">QToolButton { 
 	border: none; background: transparent;
@@ -429,6 +435,12 @@ QLineEdit:focus {
           </item>
           <item>
            <widget class="QToolButton" name="confirm_tool">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true">QToolButton { 
 	border: none; background: transparent;

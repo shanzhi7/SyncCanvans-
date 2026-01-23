@@ -83,3 +83,52 @@ int MysqlDao::Register(const std::string& name, const std::string& email, const 
 		return -1;
 	}
 }
+
+int MysqlDao::ResetPassword(const std::string& email, const std::string& verifycode, const std::string& password)
+{
+    try
+    { 
+		auto con = _mysqlPool->getConnection();
+		if (!con)
+		{
+            std::cout << "ResetPassword Error: 获取连接失败" << std::endl;
+			return message::ErrorCodes::RPCFailed;
+		}
+		// RAII: 无论后续发生什么，确保连接被归还到连接池
+        Defer defer([&]() {		//回收
+            _mysqlPool->returnConnection(std::move(con)); 
+            });
+
+		//准备update语句
+		std::unique_ptr<sql::PreparedStatement> pstmt(con->prepareStatement(
+			"UPDATE user SET passwd = ? WHERE email = ?"
+		));
+
+		// 绑定参数
+		pstmt->setString(1, password);
+        pstmt->setString(2, email);
+
+		int rows = pstmt->executeUpdate();	//更新行数
+
+		if (rows == 0)
+		{
+			// 如果影响行数为 0，说明要么邮箱不存在，要么新密码和老密码完全一样
+			std::cout << "ResetPassword Warning: 邮箱不存在或新旧密码相同. email: " << email << std::endl;
+			return message::ErrorCodes::UserNotExist;
+		}
+		std::cout << "ResetPassword Success: 密码已成功重置. email: " << email << std::endl;
+		return message::ErrorCodes::SUCCESS;	//成功
+    }
+	catch (sql::SQLException& e)
+	{
+		std::cerr << "ResetPassword SQLException: " << e.what()
+			<< " (MySQL error code: " << e.getErrorCode()
+			<< ", SQLState: " << e.getSQLState() << ")" << std::endl;
+		return message::ErrorCodes::PasswdUpFailed; // 对应 ErrorCodes::PasswdUpFailed
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "ResetPassword std::exception: " << e.what() << std::endl;
+		return message::ErrorCodes::PasswdUpFailed; // 对应 ErrorCodes::PasswdUpFailed
+	}
+}

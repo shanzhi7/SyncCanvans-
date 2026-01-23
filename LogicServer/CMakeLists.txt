@@ -65,7 +65,7 @@ add_executable (LogicServer "src/LogicServer.cpp"
 
  "src/message.pb.cc"              # Protobuf 序列化代码
  "src/message.grpc.pb.cc"         # gRPC 服务代码
-)
+ "include/LogicServer/message.grpc.pb.h" "include/LogicServer/message.pb.h")
 
 # 5.1 头文件路径
 target_include_directories(LogicServer PRIVATE

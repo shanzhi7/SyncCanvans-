@@ -36,6 +36,7 @@ qt_add_executable(DBClient
     userdata.h
     userdata.cpp
     usermgr.h usermgr.cpp
+    resetwidget.h resetwidget.cpp resetwidget.ui
 )
 
 # ---> 请添加这段代码 <---

@@ -10,6 +10,8 @@ public:
 	//注册
 	int Register(const std::string& name, const std::string& email, const std::string& password,
 		int sex = 0, const std::string& avatar = "", const std::string& signature = "");
+	//重置密码
+	int ResetPassword(const std::string& email, const std::string& verifycode, const std::string& password);
 private:
 	MysqlMgr();			//私有构造函数
 	MysqlDao _dao;		//数据访问对象

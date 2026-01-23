@@ -32,8 +32,8 @@ private:
 
 signals:
     void switchWelcome();   //发送切换欢迎页面信号
-
     void switchRegister();  //发送切换注册页面信号
+    void switchReset();     //发送切换重置密码页面信号
 };
 
 #endif // LOGINWIDGET_H
