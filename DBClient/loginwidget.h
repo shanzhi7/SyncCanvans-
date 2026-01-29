@@ -11,6 +11,9 @@
 #define LOGINWIDGET_H
 
 #include <QWidget>
+#include <QLineEdit>
+#include "TipWidget.h"
+#include "global.h"
 
 namespace Ui {
 class LoginWidget;
@@ -29,11 +32,28 @@ protected:
 
 private:
     Ui::LoginWidget *ui;
+    QMap<ReqId,std::function<void(QJsonObject)>> _handlers_map;        //服务器回包处理函数存储
+
+
+    QList<std::function<bool()>> _validators;           //// 存储所有的验证函数
+
+    // 通用绑定函数
+    void bindValidator(QLineEdit *input, const QString &pattern, const QString &errMsg);
+
+    // 初始化函数
+    void initValidator();
+    void initHandlerMap();                                              //初始化回包处理函数
+
 
 signals:
     void switchWelcome();   //发送切换欢迎页面信号
     void switchRegister();  //发送切换注册页面信号
     void switchReset();     //发送切换重置密码页面信号
+    void switchCanvas();    //发送切换Canvas页面信号
+private slots:
+    void on_login_btn_clicked();
+
+    void slot_login_mod_finish(ReqId reqid,QString res,ErrorCodes err);
 };
 
 #endif // LOGINWIDGET_H

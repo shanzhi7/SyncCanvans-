@@ -36,5 +36,3 @@ private:
 	std::function<void()> _func;	//存储延迟执行的函数
 };
 #define CODEPREFIX "code_"
-#define TOKEN_PREFIX "utoken_"
-#define UID_PREFIX "uid_token_" //用于通过 uid 找 token

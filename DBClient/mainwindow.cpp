@@ -48,6 +48,10 @@ MainWindow::MainWindow(QWidget *parent)
     reset_widget->hide();
     //初始化重置密码窗口 end
 
+    // 初始化画布窗口
+    canvas = new Canvas();
+    canvas->setAttribute(Qt::WA_DeleteOnClose);     //关闭自动释放
+
     //连接点击欢迎页切换登录窗口
     connect(welcome_widget,&WelcomeWidget::switchLogin,this,&MainWindow::slotSwitchLogin);
 
@@ -65,6 +69,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     //连接登录界面点击切换重置密码页面
     connect(login_widget,&LoginWidget::switchReset,this,&MainWindow::slotSwitchResetFromLogin);
+
+    //连接登录成功切换Canvas页面
+    connect(login_widget,&LoginWidget::switchCanvas,this,&MainWindow::slotSwitchCanvas);
 }
 
 MainWindow::~MainWindow()
@@ -235,4 +242,10 @@ void MainWindow::slotSwitchResetFromLogin()
     setCentralWidget(reset_widget);
     this->setFixedSize(reset_widget->size());
     reset_widget->show();
+}
+
+void MainWindow::slotSwitchCanvas()
+{
+    canvas->show();
+    this->hide();
 }

@@ -3,7 +3,7 @@
 // source: message.proto
 // Protobuf C++ Version: 5.29.5
 
-#include "LogicServer/message.pb.h"
+#include "CanvasServer/message.pb.h"
 
 #include <algorithm>
 #include <type_traits>
@@ -25,60 +25,6 @@ namespace _pb = ::google::protobuf;
 namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
 namespace message {
-
-inline constexpr VerifyTokenRsp::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : error_{0},
-        uid_{0},
-        _cached_size_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR VerifyTokenRsp::VerifyTokenRsp(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(::_pbi::ConstantInitialized()) {
-}
-struct VerifyTokenRspDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR VerifyTokenRspDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~VerifyTokenRspDefaultTypeInternal() {}
-  union {
-    VerifyTokenRsp _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 VerifyTokenRspDefaultTypeInternal _VerifyTokenRsp_default_instance_;
-
-inline constexpr VerifyTokenReq::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : token_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        uid_{0},
-        _cached_size_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR VerifyTokenReq::VerifyTokenReq(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(::_pbi::ConstantInitialized()) {
-}
-struct VerifyTokenReqDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR VerifyTokenReqDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~VerifyTokenReqDefaultTypeInternal() {}
-  union {
-    VerifyTokenReq _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 VerifyTokenReqDefaultTypeInternal _VerifyTokenReq_default_instance_;
 
 inline constexpr ResetPasswordRsp::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -217,12 +163,6 @@ inline constexpr LoginRsp::Impl_::Impl_(
         avatar_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        host_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        port_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
         error_{0},
         uid_{0},
         _cached_size_{0} {}
@@ -335,7 +275,7 @@ struct GetVarifyReqDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetVarifyReqDefaultTypeInternal _GetVarifyReq_default_instance_;
 }  // namespace message
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_message_2eproto[2];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_message_2eproto[1];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_message_2eproto = nullptr;
 const ::uint32_t
@@ -428,28 +368,6 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::message::LoginRsp, _impl_.token_),
         PROTOBUF_FIELD_OFFSET(::message::LoginRsp, _impl_.name_),
         PROTOBUF_FIELD_OFFSET(::message::LoginRsp, _impl_.avatar_),
-        PROTOBUF_FIELD_OFFSET(::message::LoginRsp, _impl_.host_),
-        PROTOBUF_FIELD_OFFSET(::message::LoginRsp, _impl_.port_),
-        ~0u,  // no _has_bits_
-        PROTOBUF_FIELD_OFFSET(::message::VerifyTokenReq, _internal_metadata_),
-        ~0u,  // no _extensions_
-        ~0u,  // no _oneof_case_
-        ~0u,  // no _weak_field_map_
-        ~0u,  // no _inlined_string_donated_
-        ~0u,  // no _split_
-        ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::message::VerifyTokenReq, _impl_.uid_),
-        PROTOBUF_FIELD_OFFSET(::message::VerifyTokenReq, _impl_.token_),
-        ~0u,  // no _has_bits_
-        PROTOBUF_FIELD_OFFSET(::message::VerifyTokenRsp, _internal_metadata_),
-        ~0u,  // no _extensions_
-        ~0u,  // no _oneof_case_
-        ~0u,  // no _weak_field_map_
-        ~0u,  // no _inlined_string_donated_
-        ~0u,  // no _split_
-        ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::message::VerifyTokenRsp, _impl_.error_),
-        PROTOBUF_FIELD_OFFSET(::message::VerifyTokenRsp, _impl_.uid_),
 };
 
 static const ::_pbi::MigrationSchema
@@ -462,8 +380,6 @@ static const ::_pbi::MigrationSchema
         {55, -1, -1, sizeof(::message::ResetPasswordRsp)},
         {64, -1, -1, sizeof(::message::LoginReq)},
         {74, -1, -1, sizeof(::message::LoginRsp)},
-        {89, -1, -1, sizeof(::message::VerifyTokenReq)},
-        {99, -1, -1, sizeof(::message::VerifyTokenRsp)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::message::_GetVarifyReq_default_instance_._instance,
@@ -474,8 +390,6 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::message::_ResetPasswordRsp_default_instance_._instance,
     &::message::_LoginReq_default_instance_._instance,
     &::message::_LoginRsp_default_instance_._instance,
-    &::message::_VerifyTokenReq_default_instance_._instance,
-    &::message::_VerifyTokenRsp_default_instance_._instance,
 };
 const char descriptor_table_protodef_message_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
@@ -489,43 +403,35 @@ const char descriptor_table_protodef_message_2eproto[] ABSL_ATTRIBUTE_SECTION_VA
     "\r\n\005email\030\001 \001(\t\022\022\n\nvarifycode\030\002 \001(\t\022\016\n\006pa"
     "sswd\030\003 \001(\t\022\023\n\013confirm_pwd\030\004 \001(\t\"!\n\020Reset"
     "PasswordRsp\022\r\n\005error\030\001 \001(\005\")\n\010LoginReq\022\r"
-    "\n\005email\030\001 \001(\t\022\016\n\006passwd\030\002 \001(\t\"o\n\010LoginRs"
+    "\n\005email\030\001 \001(\t\022\016\n\006passwd\030\002 \001(\t\"S\n\010LoginRs"
     "p\022\r\n\005error\030\001 \001(\005\022\013\n\003uid\030\002 \001(\005\022\r\n\005token\030\003"
-    " \001(\t\022\014\n\004name\030\004 \001(\t\022\016\n\006avatar\030\005 \001(\t\022\014\n\004ho"
-    "st\030\006 \001(\t\022\014\n\004port\030\007 \001(\t\",\n\016VerifyTokenReq"
-    "\022\013\n\003uid\030\001 \001(\005\022\r\n\005token\030\002 \001(\t\",\n\016VerifyTo"
-    "kenRsp\022\r\n\005error\030\001 \001(\005\022\013\n\003uid\030\002 \001(\005*\205\002\n\nE"
+    " \001(\t\022\014\n\004name\030\004 \001(\t\022\016\n\006avatar\030\005 \001(\t*\205\002\n\nE"
     "rrorCodes\022\013\n\007SUCCESS\020\000\022\017\n\nError_Json\020\351\007\022"
     "\016\n\tRPCFailed\020\352\007\022\022\n\rVarifyExpired\020\353\007\022\022\n\rV"
     "arifyCodeErr\020\354\007\022\016\n\tUserExist\020\355\007\022\016\n\tPassw"
     "dErr\020\356\007\022\022\n\rEmailNotMatch\020\357\007\022\023\n\016PasswdUpF"
     "ailed\020\360\007\022\022\n\rPasswdInvalid\020\361\007\022\021\n\014TokenInv"
     "alid\020\362\007\022\017\n\nUidInvalid\020\363\007\022\021\n\014UserNotExist"
-    "\020\364\007\022\r\n\010LoginErr\020\365\007*\207\001\n\005MsgID\022\016\n\nID_UNKNO"
-    "WN\020\000\022\021\n\014ID_LOGIN_REQ\020\351\007\022\021\n\014ID_LOGIN_RSP\020"
-    "\352\007\022\020\n\013ID_DRAW_REQ\020\353\007\022\020\n\013ID_DRAW_RSP\020\354\007\022\021"
-    "\n\014ID_CLEAR_REQ\020\355\007\022\021\n\014ID_CLEAR_RSP\020\356\0072P\n\r"
-    "VarifyService\022\?\n\rGetVarifyCode\022\025.message"
-    ".GetVarifyReq\032\025.message.GetVarifyRsp\"\0002\207"
-    "\002\n\014LogicService\022<\n\014RegisterUser\022\024.messag"
-    "e.RegisterReq\032\024.message.RegisterRsp\"\000\022G\n"
-    "\rResetPassword\022\031.message.ResetPasswordRe"
-    "q\032\031.message.ResetPasswordRsp\"\000\022-\n\005Login\022"
-    "\021.message.LoginReq\032\021.message.LoginRsp\022A\n"
-    "\013VerifyToken\022\027.message.VerifyTokenReq\032\027."
-    "message.VerifyTokenRsp\"\000b\006proto3"
+    "\020\364\007\022\r\n\010LoginErr\020\365\0072P\n\rVarifyService\022\?\n\rG"
+    "etVarifyCode\022\025.message.GetVarifyReq\032\025.me"
+    "ssage.GetVarifyRsp\"\0002\312\001\n\014LogicService\022<\n"
+    "\014RegisterUser\022\024.message.RegisterReq\032\024.me"
+    "ssage.RegisterRsp\"\000\0223\n\tLoginUser\022\021.messa"
+    "ge.LoginReq\032\021.message.LoginRsp\"\000\022G\n\rRese"
+    "tPassword\022\031.message.ResetPasswordReq\032\031.m"
+    "essage.ResetPasswordRsp\"\000b\006proto3"
 };
 static ::absl::once_flag descriptor_table_message_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_message_2eproto = {
     false,
     false,
-    1392,
+    1073,
     descriptor_table_protodef_message_2eproto,
     "message.proto",
     &descriptor_table_message_2eproto_once,
     nullptr,
     0,
-    10,
+    8,
     schemas,
     file_default_instances,
     TableStruct_message_2eproto::offsets,
@@ -541,15 +447,6 @@ PROTOBUF_CONSTINIT const uint32_t ErrorCodes_internal_data_[] = {
     65536u, 851968u, 1008u, 1004u, 1012u, 1002u, 1006u, 1010u, 1013u, 1001u, 1003u, 1005u, 1007u, 1009u, 1011u, };
 bool ErrorCodes_IsValid(int value) {
   return ::_pbi::ValidateEnum(value, ErrorCodes_internal_data_);
-}
-const ::google::protobuf::EnumDescriptor* MsgID_descriptor() {
-  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_message_2eproto);
-  return file_level_enum_descriptors_message_2eproto[1];
-}
-PROTOBUF_CONSTINIT const uint32_t MsgID_internal_data_[] = {
-    65536u, 393216u, 1004u, 1002u, 1006u, 1001u, 1003u, 1005u, };
-bool MsgID_IsValid(int value) {
-  return ::_pbi::ValidateEnum(value, MsgID_internal_data_);
 }
 // ===================================================================
 
@@ -2460,8 +2357,6 @@ inline PROTOBUF_NDEBUG_INLINE LoginRsp::Impl_::Impl_(
       : token_(arena, from.token_),
         name_(arena, from.name_),
         avatar_(arena, from.avatar_),
-        host_(arena, from.host_),
-        port_(arena, from.port_),
         _cached_size_{0} {}
 
 LoginRsp::LoginRsp(
@@ -2493,8 +2388,6 @@ inline PROTOBUF_NDEBUG_INLINE LoginRsp::Impl_::Impl_(
       : token_(arena),
         name_(arena),
         avatar_(arena),
-        host_(arena),
-        port_(arena),
         _cached_size_{0} {}
 
 inline void LoginRsp::SharedCtor(::_pb::Arena* arena) {
@@ -2517,8 +2410,6 @@ inline void LoginRsp::SharedDtor(MessageLite& self) {
   this_._impl_.token_.Destroy();
   this_._impl_.name_.Destroy();
   this_._impl_.avatar_.Destroy();
-  this_._impl_.host_.Destroy();
-  this_._impl_.port_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -2558,15 +2449,15 @@ const ::google::protobuf::internal::ClassData* LoginRsp::GetClassData() const {
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 7, 0, 48, 2> LoginRsp::_table_ = {
+const ::_pbi::TcParseTable<3, 5, 0, 40, 2> LoginRsp::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    7, 56,  // max_field_number, fast_idx_mask
+    5, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967168,  // skipmap
+    4294967264,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    7,  // num_field_entries
+    5,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -2592,12 +2483,8 @@ const ::_pbi::TcParseTable<3, 7, 0, 48, 2> LoginRsp::_table_ = {
     // string avatar = 5;
     {::_pbi::TcParser::FastUS1,
      {42, 63, 0, PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.avatar_)}},
-    // string host = 6;
-    {::_pbi::TcParser::FastUS1,
-     {50, 63, 0, PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.host_)}},
-    // string port = 7;
-    {::_pbi::TcParser::FastUS1,
-     {58, 63, 0, PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.port_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
   }}, {{
@@ -2616,22 +2503,14 @@ const ::_pbi::TcParseTable<3, 7, 0, 48, 2> LoginRsp::_table_ = {
     // string avatar = 5;
     {PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.avatar_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string host = 6;
-    {PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.host_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string port = 7;
-    {PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.port_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\20\0\0\5\4\6\4\4"
+    "\20\0\0\5\4\6\0\0"
     "message.LoginRsp"
     "token"
     "name"
     "avatar"
-    "host"
-    "port"
   }},
 };
 
@@ -2645,8 +2524,6 @@ PROTOBUF_NOINLINE void LoginRsp::Clear() {
   _impl_.token_.ClearToEmpty();
   _impl_.name_.ClearToEmpty();
   _impl_.avatar_.ClearToEmpty();
-  _impl_.host_.ClearToEmpty();
-  _impl_.port_.ClearToEmpty();
   ::memset(&_impl_.error_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.uid_) -
       reinterpret_cast<char*>(&_impl_.error_)) + sizeof(_impl_.uid_));
@@ -2706,22 +2583,6 @@ PROTOBUF_NOINLINE void LoginRsp::Clear() {
             target = stream->WriteStringMaybeAliased(5, _s, target);
           }
 
-          // string host = 6;
-          if (!this_._internal_host().empty()) {
-            const std::string& _s = this_._internal_host();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "message.LoginRsp.host");
-            target = stream->WriteStringMaybeAliased(6, _s, target);
-          }
-
-          // string port = 7;
-          if (!this_._internal_port().empty()) {
-            const std::string& _s = this_._internal_port();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "message.LoginRsp.port");
-            target = stream->WriteStringMaybeAliased(7, _s, target);
-          }
-
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
             target =
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -2762,16 +2623,6 @@ PROTOBUF_NOINLINE void LoginRsp::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_avatar());
             }
-            // string host = 6;
-            if (!this_._internal_host().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_host());
-            }
-            // string port = 7;
-            if (!this_._internal_port().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_port());
-            }
             // int32 error = 1;
             if (this_._internal_error() != 0) {
               total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
@@ -2804,12 +2655,6 @@ void LoginRsp::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google
   if (!from._internal_avatar().empty()) {
     _this->_internal_set_avatar(from._internal_avatar());
   }
-  if (!from._internal_host().empty()) {
-    _this->_internal_set_host(from._internal_host());
-  }
-  if (!from._internal_port().empty()) {
-    _this->_internal_set_port(from._internal_port());
-  }
   if (from._internal_error() != 0) {
     _this->_impl_.error_ = from._impl_.error_;
   }
@@ -2835,8 +2680,6 @@ void LoginRsp::InternalSwap(LoginRsp* PROTOBUF_RESTRICT other) {
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.token_, &other->_impl_.token_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, &other->_impl_.name_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.avatar_, &other->_impl_.avatar_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.host_, &other->_impl_.host_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.port_, &other->_impl_.port_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.uid_)
       + sizeof(LoginRsp::_impl_.uid_)
@@ -2846,504 +2689,6 @@ void LoginRsp::InternalSwap(LoginRsp* PROTOBUF_RESTRICT other) {
 }
 
 ::google::protobuf::Metadata LoginRsp::GetMetadata() const {
-  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
-}
-// ===================================================================
-
-class VerifyTokenReq::_Internal {
- public:
-};
-
-VerifyTokenReq::VerifyTokenReq(::google::protobuf::Arena* arena)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, _class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:message.VerifyTokenReq)
-}
-inline PROTOBUF_NDEBUG_INLINE VerifyTokenReq::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from, const ::message::VerifyTokenReq& from_msg)
-      : token_(arena, from.token_),
-        _cached_size_{0} {}
-
-VerifyTokenReq::VerifyTokenReq(
-    ::google::protobuf::Arena* arena,
-    const VerifyTokenReq& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, _class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  VerifyTokenReq* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  _impl_.uid_ = from._impl_.uid_;
-
-  // @@protoc_insertion_point(copy_constructor:message.VerifyTokenReq)
-}
-inline PROTOBUF_NDEBUG_INLINE VerifyTokenReq::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility,
-    ::google::protobuf::Arena* arena)
-      : token_(arena),
-        _cached_size_{0} {}
-
-inline void VerifyTokenReq::SharedCtor(::_pb::Arena* arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.uid_ = {};
-}
-VerifyTokenReq::~VerifyTokenReq() {
-  // @@protoc_insertion_point(destructor:message.VerifyTokenReq)
-  SharedDtor(*this);
-}
-inline void VerifyTokenReq::SharedDtor(MessageLite& self) {
-  VerifyTokenReq& this_ = static_cast<VerifyTokenReq&>(self);
-  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.token_.Destroy();
-  this_._impl_.~Impl_();
-}
-
-inline void* VerifyTokenReq::PlacementNew_(const void*, void* mem,
-                                        ::google::protobuf::Arena* arena) {
-  return ::new (mem) VerifyTokenReq(arena);
-}
-constexpr auto VerifyTokenReq::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(VerifyTokenReq),
-                                            alignof(VerifyTokenReq));
-}
-PROTOBUF_CONSTINIT
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::google::protobuf::internal::ClassDataFull VerifyTokenReq::_class_data_ = {
-    ::google::protobuf::internal::ClassData{
-        &_VerifyTokenReq_default_instance_._instance,
-        &_table_.header,
-        nullptr,  // OnDemandRegisterArenaDtor
-        nullptr,  // IsInitialized
-        &VerifyTokenReq::MergeImpl,
-        ::google::protobuf::Message::GetNewImpl<VerifyTokenReq>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        &VerifyTokenReq::SharedDtor,
-        ::google::protobuf::Message::GetClearImpl<VerifyTokenReq>(), &VerifyTokenReq::ByteSizeLong,
-            &VerifyTokenReq::_InternalSerialize,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-        PROTOBUF_FIELD_OFFSET(VerifyTokenReq, _impl_._cached_size_),
-        false,
-    },
-    &VerifyTokenReq::kDescriptorMethods,
-    &descriptor_table_message_2eproto,
-    nullptr,  // tracker
-};
-const ::google::protobuf::internal::ClassData* VerifyTokenReq::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
-  return _class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 36, 2> VerifyTokenReq::_table_ = {
-  {
-    0,  // no _has_bits_
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    _class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::GenericFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::message::VerifyTokenReq>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    // string token = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(VerifyTokenReq, _impl_.token_)}},
-    // int32 uid = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(VerifyTokenReq, _impl_.uid_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(VerifyTokenReq, _impl_.uid_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // int32 uid = 1;
-    {PROTOBUF_FIELD_OFFSET(VerifyTokenReq, _impl_.uid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
-    // string token = 2;
-    {PROTOBUF_FIELD_OFFSET(VerifyTokenReq, _impl_.token_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-  }},
-  // no aux_entries
-  {{
-    "\26\0\5\0\0\0\0\0"
-    "message.VerifyTokenReq"
-    "token"
-  }},
-};
-
-PROTOBUF_NOINLINE void VerifyTokenReq::Clear() {
-// @@protoc_insertion_point(message_clear_start:message.VerifyTokenReq)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.token_.ClearToEmpty();
-  _impl_.uid_ = 0;
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::uint8_t* VerifyTokenReq::_InternalSerialize(
-            const MessageLite& base, ::uint8_t* target,
-            ::google::protobuf::io::EpsCopyOutputStream* stream) {
-          const VerifyTokenReq& this_ = static_cast<const VerifyTokenReq&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-        ::uint8_t* VerifyTokenReq::_InternalSerialize(
-            ::uint8_t* target,
-            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-          const VerifyTokenReq& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(serialize_to_array_start:message.VerifyTokenReq)
-          ::uint32_t cached_has_bits = 0;
-          (void)cached_has_bits;
-
-          // int32 uid = 1;
-          if (this_._internal_uid() != 0) {
-            target = ::google::protobuf::internal::WireFormatLite::
-                WriteInt32ToArrayWithField<1>(
-                    stream, this_._internal_uid(), target);
-          }
-
-          // string token = 2;
-          if (!this_._internal_token().empty()) {
-            const std::string& _s = this_._internal_token();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "message.VerifyTokenReq.token");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
-          }
-
-          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
-            target =
-                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-          }
-          // @@protoc_insertion_point(serialize_to_array_end:message.VerifyTokenReq)
-          return target;
-        }
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::size_t VerifyTokenReq::ByteSizeLong(const MessageLite& base) {
-          const VerifyTokenReq& this_ = static_cast<const VerifyTokenReq&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-        ::size_t VerifyTokenReq::ByteSizeLong() const {
-          const VerifyTokenReq& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(message_byte_size_start:message.VerifyTokenReq)
-          ::size_t total_size = 0;
-
-          ::uint32_t cached_has_bits = 0;
-          // Prevent compiler warnings about cached_has_bits being unused
-          (void)cached_has_bits;
-
-          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
-           {
-            // string token = 2;
-            if (!this_._internal_token().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_token());
-            }
-            // int32 uid = 1;
-            if (this_._internal_uid() != 0) {
-              total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
-                  this_._internal_uid());
-            }
-          }
-          return this_.MaybeComputeUnknownFieldsSize(total_size,
-                                                     &this_._impl_._cached_size_);
-        }
-
-void VerifyTokenReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
-  auto* const _this = static_cast<VerifyTokenReq*>(&to_msg);
-  auto& from = static_cast<const VerifyTokenReq&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:message.VerifyTokenReq)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_token().empty()) {
-    _this->_internal_set_token(from._internal_token());
-  }
-  if (from._internal_uid() != 0) {
-    _this->_impl_.uid_ = from._impl_.uid_;
-  }
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void VerifyTokenReq::CopyFrom(const VerifyTokenReq& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:message.VerifyTokenReq)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-
-void VerifyTokenReq::InternalSwap(VerifyTokenReq* PROTOBUF_RESTRICT other) {
-  using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.token_, &other->_impl_.token_, arena);
-        swap(_impl_.uid_, other->_impl_.uid_);
-}
-
-::google::protobuf::Metadata VerifyTokenReq::GetMetadata() const {
-  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
-}
-// ===================================================================
-
-class VerifyTokenRsp::_Internal {
- public:
-};
-
-VerifyTokenRsp::VerifyTokenRsp(::google::protobuf::Arena* arena)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, _class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:message.VerifyTokenRsp)
-}
-VerifyTokenRsp::VerifyTokenRsp(
-    ::google::protobuf::Arena* arena, const VerifyTokenRsp& from)
-    : VerifyTokenRsp(arena) {
-  MergeFrom(from);
-}
-inline PROTOBUF_NDEBUG_INLINE VerifyTokenRsp::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility,
-    ::google::protobuf::Arena* arena)
-      : _cached_size_{0} {}
-
-inline void VerifyTokenRsp::SharedCtor(::_pb::Arena* arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-  ::memset(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, error_),
-           0,
-           offsetof(Impl_, uid_) -
-               offsetof(Impl_, error_) +
-               sizeof(Impl_::uid_));
-}
-VerifyTokenRsp::~VerifyTokenRsp() {
-  // @@protoc_insertion_point(destructor:message.VerifyTokenRsp)
-  SharedDtor(*this);
-}
-inline void VerifyTokenRsp::SharedDtor(MessageLite& self) {
-  VerifyTokenRsp& this_ = static_cast<VerifyTokenRsp&>(self);
-  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.~Impl_();
-}
-
-inline void* VerifyTokenRsp::PlacementNew_(const void*, void* mem,
-                                        ::google::protobuf::Arena* arena) {
-  return ::new (mem) VerifyTokenRsp(arena);
-}
-constexpr auto VerifyTokenRsp::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(VerifyTokenRsp),
-                                            alignof(VerifyTokenRsp));
-}
-PROTOBUF_CONSTINIT
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::google::protobuf::internal::ClassDataFull VerifyTokenRsp::_class_data_ = {
-    ::google::protobuf::internal::ClassData{
-        &_VerifyTokenRsp_default_instance_._instance,
-        &_table_.header,
-        nullptr,  // OnDemandRegisterArenaDtor
-        nullptr,  // IsInitialized
-        &VerifyTokenRsp::MergeImpl,
-        ::google::protobuf::Message::GetNewImpl<VerifyTokenRsp>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        &VerifyTokenRsp::SharedDtor,
-        ::google::protobuf::Message::GetClearImpl<VerifyTokenRsp>(), &VerifyTokenRsp::ByteSizeLong,
-            &VerifyTokenRsp::_InternalSerialize,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-        PROTOBUF_FIELD_OFFSET(VerifyTokenRsp, _impl_._cached_size_),
-        false,
-    },
-    &VerifyTokenRsp::kDescriptorMethods,
-    &descriptor_table_message_2eproto,
-    nullptr,  // tracker
-};
-const ::google::protobuf::internal::ClassData* VerifyTokenRsp::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
-  return _class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 0, 2> VerifyTokenRsp::_table_ = {
-  {
-    0,  // no _has_bits_
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    _class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::GenericFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::message::VerifyTokenRsp>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    // int32 uid = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(VerifyTokenRsp, _impl_.uid_), 63>(),
-     {16, 63, 0, PROTOBUF_FIELD_OFFSET(VerifyTokenRsp, _impl_.uid_)}},
-    // int32 error = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(VerifyTokenRsp, _impl_.error_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(VerifyTokenRsp, _impl_.error_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // int32 error = 1;
-    {PROTOBUF_FIELD_OFFSET(VerifyTokenRsp, _impl_.error_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
-    // int32 uid = 2;
-    {PROTOBUF_FIELD_OFFSET(VerifyTokenRsp, _impl_.uid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
-  }},
-  // no aux_entries
-  {{
-  }},
-};
-
-PROTOBUF_NOINLINE void VerifyTokenRsp::Clear() {
-// @@protoc_insertion_point(message_clear_start:message.VerifyTokenRsp)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  ::memset(&_impl_.error_, 0, static_cast<::size_t>(
-      reinterpret_cast<char*>(&_impl_.uid_) -
-      reinterpret_cast<char*>(&_impl_.error_)) + sizeof(_impl_.uid_));
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::uint8_t* VerifyTokenRsp::_InternalSerialize(
-            const MessageLite& base, ::uint8_t* target,
-            ::google::protobuf::io::EpsCopyOutputStream* stream) {
-          const VerifyTokenRsp& this_ = static_cast<const VerifyTokenRsp&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-        ::uint8_t* VerifyTokenRsp::_InternalSerialize(
-            ::uint8_t* target,
-            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-          const VerifyTokenRsp& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(serialize_to_array_start:message.VerifyTokenRsp)
-          ::uint32_t cached_has_bits = 0;
-          (void)cached_has_bits;
-
-          // int32 error = 1;
-          if (this_._internal_error() != 0) {
-            target = ::google::protobuf::internal::WireFormatLite::
-                WriteInt32ToArrayWithField<1>(
-                    stream, this_._internal_error(), target);
-          }
-
-          // int32 uid = 2;
-          if (this_._internal_uid() != 0) {
-            target = ::google::protobuf::internal::WireFormatLite::
-                WriteInt32ToArrayWithField<2>(
-                    stream, this_._internal_uid(), target);
-          }
-
-          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
-            target =
-                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-          }
-          // @@protoc_insertion_point(serialize_to_array_end:message.VerifyTokenRsp)
-          return target;
-        }
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::size_t VerifyTokenRsp::ByteSizeLong(const MessageLite& base) {
-          const VerifyTokenRsp& this_ = static_cast<const VerifyTokenRsp&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-        ::size_t VerifyTokenRsp::ByteSizeLong() const {
-          const VerifyTokenRsp& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(message_byte_size_start:message.VerifyTokenRsp)
-          ::size_t total_size = 0;
-
-          ::uint32_t cached_has_bits = 0;
-          // Prevent compiler warnings about cached_has_bits being unused
-          (void)cached_has_bits;
-
-          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
-           {
-            // int32 error = 1;
-            if (this_._internal_error() != 0) {
-              total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
-                  this_._internal_error());
-            }
-            // int32 uid = 2;
-            if (this_._internal_uid() != 0) {
-              total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
-                  this_._internal_uid());
-            }
-          }
-          return this_.MaybeComputeUnknownFieldsSize(total_size,
-                                                     &this_._impl_._cached_size_);
-        }
-
-void VerifyTokenRsp::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
-  auto* const _this = static_cast<VerifyTokenRsp*>(&to_msg);
-  auto& from = static_cast<const VerifyTokenRsp&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:message.VerifyTokenRsp)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (from._internal_error() != 0) {
-    _this->_impl_.error_ = from._impl_.error_;
-  }
-  if (from._internal_uid() != 0) {
-    _this->_impl_.uid_ = from._impl_.uid_;
-  }
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void VerifyTokenRsp::CopyFrom(const VerifyTokenRsp& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:message.VerifyTokenRsp)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-
-void VerifyTokenRsp::InternalSwap(VerifyTokenRsp* PROTOBUF_RESTRICT other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(VerifyTokenRsp, _impl_.uid_)
-      + sizeof(VerifyTokenRsp::_impl_.uid_)
-      - PROTOBUF_FIELD_OFFSET(VerifyTokenRsp, _impl_.error_)>(
-          reinterpret_cast<char*>(&_impl_.error_),
-          reinterpret_cast<char*>(&other->_impl_.error_));
-}
-
-::google::protobuf::Metadata VerifyTokenRsp::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // @@protoc_insertion_point(namespace_scope)

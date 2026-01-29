@@ -62,3 +62,25 @@ ResetPasswordRsp LogicGrpcClient::ResetPassword(ResetPasswordReq req)
         return rsp;
     }
 }
+
+LoginRsp LogicGrpcClient::Login(LoginReq req)
+{
+    ClientContext context;
+    LoginRsp reply;
+
+    Status status = _stub->Login(&context, req, &reply);  // 调用 LogicServer 的 Login 方法
+    if (status.ok())
+    {
+        // RPC 调用成功，直接返回 LogicServer 给出的结果
+        return reply;
+    }
+    else
+    {
+        // RPC 调用失败（网络问题、服务器挂了等）
+        // 创建一个错误码，告诉上层是 RPC 这一层出问题了
+        reply.set_error(message::ErrorCodes::RPCFailed);
+        std::cout << "[GateServer] Call LogicServer Login Failed. Error: "
+            << status.error_code() << ": " << status.error_message() << std::endl;
+        return reply;
+    }
+}

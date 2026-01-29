@@ -1,4 +1,4 @@
-﻿# CMakeList.txt: LogicServer 的 CMake 项目，在此处包括源代码并定义
+﻿# CMakeList.txt: CanvasServer 的 CMake 项目，在此处包括源代码并定义
 # 项目特定的逻辑。
 #
 cmake_minimum_required (VERSION 3.20)
@@ -14,7 +14,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 endif()
 set(VCPKG_TARGET_TRIPLET "x64-windows-static")
 
-project ("LogicServer")
+project ("CanvasServer")
 
 # 2. 静态运行时
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -46,36 +46,24 @@ find_package(lz4 CONFIG REQUIRED)
 find_package(zstd CONFIG REQUIRED)
 
 # 5. 生成
-add_executable (LogicServer "src/LogicServer.cpp"
-"include/LogicServer/LogicServer.h"
- "include/LogicServer/LogicServiceImpl.h"
- "src/LogicServiceImpl.cpp"
- "include/LogicServer/const.h"
- "include/LogicServer/RedisMgr.h"
- "src/RedisMgr.cpp"
- "include/LogicServer/MysqlDao.h"
- "src/MysqlDao.cpp"
- "include/LogicServer/MysqlMgr.h"
- "src/MysqlMgr.cpp"
- "include/LogicServer/MysqlPool.h"
- "src/MysqlPool.cpp"
- "include/LogicServer/ConfigMgr.h"
- "src/ConfigMgr.cpp"
- "include/LogicServer/Singleton.h"
-
- "src/message.pb.cc"              # Protobuf 序列化代码
- "src/message.grpc.pb.cc"         # gRPC 服务代码
-   "include/LogicServer/message.grpc.pb.h"
-   "include/LogicServer/message.pb.h"
-   "include/LogicServer/data.h")
+add_executable (CanvasServer "src/CanvasServer.cpp"
+"include/CanvasServer/CanvasServer.h"
+"include/CanvasServer/message.grpc.pb.h" 
+"include/CanvasServer/message.pb.h" 
+"include/CanvasServer/ConfigMgr.h" 
+"include/CanvasServer/const.h"
+"include/CanvasServer/RedisMgr.h" 
+"include/CanvasServer/Singleton.h"
+"src/ConfigMgr.cpp" 
+"src/RedisMgr.cpp")
 
 # 5.1 头文件路径
-target_include_directories(LogicServer PRIVATE
+target_include_directories(CanvasServer PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
 # 6. 链接
-target_link_libraries(LogicServer PRIVATE
+target_link_libraries(CanvasServer PRIVATE
     # Redis
     hiredis::hiredis
     redis++::redis++_static
@@ -125,11 +113,10 @@ target_link_libraries(LogicServer PRIVATE
 # ---------------------------------------------------------
 
 # 1. 确保构建目标存在 (假设你的可执行文件叫 GateServer)
-if(TARGET LogicServer)
-    add_custom_command(TARGET LogicServer POST_BUILD
+if(TARGET CanvasServer)
+    add_custom_command(TARGET CanvasServer POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/config.ini"      # 源文件路径
-            "$<TARGET_FILE_DIR:LogicServer>/config.ini"    # 目标路径(自动定位到exe所在目录)
+            "$<TARGET_FILE_DIR:CanvasServer>/config.ini"    # 目标路径(自动定位到exe所在目录)
     )
 endif()
-

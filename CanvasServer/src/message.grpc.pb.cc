@@ -2,8 +2,8 @@
 // If you make any local change, they will be lost.
 // source: message.proto
 
-#include "LogicServer/message.pb.h"
-#include "LogicServer/message.grpc.pb.h"
+#include "CanvasServer/message.pb.h"
+#include "CanvasServer/message.grpc.pb.h"
 
 #include <functional>
 #include <grpcpp/support/async_stream.h>
@@ -84,9 +84,8 @@ VarifyService::Service::~Service() {
 
 static const char* LogicService_method_names[] = {
   "/message.LogicService/RegisterUser",
+  "/message.LogicService/LoginUser",
   "/message.LogicService/ResetPassword",
-  "/message.LogicService/Login",
-  "/message.LogicService/VerifyToken",
 };
 
 std::unique_ptr< LogicService::Stub> LogicService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -97,9 +96,8 @@ std::unique_ptr< LogicService::Stub> LogicService::NewStub(const std::shared_ptr
 
 LogicService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_RegisterUser_(LogicService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ResetPassword_(LogicService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Login_(LogicService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_VerifyToken_(LogicService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_LoginUser_(LogicService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ResetPassword_(LogicService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status LogicService::Stub::RegisterUser(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::message::RegisterRsp* response) {
@@ -121,6 +119,29 @@ void LogicService::Stub::async::RegisterUser(::grpc::ClientContext* context, con
 ::grpc::ClientAsyncResponseReader< ::message::RegisterRsp>* LogicService::Stub::AsyncRegisterUserRaw(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncRegisterUserRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status LogicService::Stub::LoginUser(::grpc::ClientContext* context, const ::message::LoginReq& request, ::message::LoginRsp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::LoginReq, ::message::LoginRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_LoginUser_, context, request, response);
+}
+
+void LogicService::Stub::async::LoginUser(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::LoginReq, ::message::LoginRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_LoginUser_, context, request, response, std::move(f));
+}
+
+void LogicService::Stub::async::LoginUser(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_LoginUser_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::LoginRsp>* LogicService::Stub::PrepareAsyncLoginUserRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::LoginRsp, ::message::LoginReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_LoginUser_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::LoginRsp>* LogicService::Stub::AsyncLoginUserRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncLoginUserRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -148,52 +169,6 @@ void LogicService::Stub::async::ResetPassword(::grpc::ClientContext* context, co
   return result;
 }
 
-::grpc::Status LogicService::Stub::Login(::grpc::ClientContext* context, const ::message::LoginReq& request, ::message::LoginRsp* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::message::LoginReq, ::message::LoginRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Login_, context, request, response);
-}
-
-void LogicService::Stub::async::Login(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::message::LoginReq, ::message::LoginRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Login_, context, request, response, std::move(f));
-}
-
-void LogicService::Stub::async::Login(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Login_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::message::LoginRsp>* LogicService::Stub::PrepareAsyncLoginRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::LoginRsp, ::message::LoginReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Login_, context, request);
-}
-
-::grpc::ClientAsyncResponseReader< ::message::LoginRsp>* LogicService::Stub::AsyncLoginRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
-  auto* result =
-    this->PrepareAsyncLoginRaw(context, request, cq);
-  result->StartCall();
-  return result;
-}
-
-::grpc::Status LogicService::Stub::VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::message::VerifyTokenRsp* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::message::VerifyTokenReq, ::message::VerifyTokenRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_VerifyToken_, context, request, response);
-}
-
-void LogicService::Stub::async::VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::message::VerifyTokenReq, ::message::VerifyTokenRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VerifyToken_, context, request, response, std::move(f));
-}
-
-void LogicService::Stub::async::VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_VerifyToken_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::message::VerifyTokenRsp>* LogicService::Stub::PrepareAsyncVerifyTokenRaw(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::VerifyTokenRsp, ::message::VerifyTokenReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_VerifyToken_, context, request);
-}
-
-::grpc::ClientAsyncResponseReader< ::message::VerifyTokenRsp>* LogicService::Stub::AsyncVerifyTokenRaw(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) {
-  auto* result =
-    this->PrepareAsyncVerifyTokenRaw(context, request, cq);
-  result->StartCall();
-  return result;
-}
-
 LogicService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       LogicService_method_names[0],
@@ -208,32 +183,22 @@ LogicService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       LogicService_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< LogicService::Service, ::message::LoginReq, ::message::LoginRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](LogicService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::message::LoginReq* req,
+             ::message::LoginRsp* resp) {
+               return service->LoginUser(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      LogicService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< LogicService::Service, ::message::ResetPasswordReq, ::message::ResetPasswordRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LogicService::Service* service,
              ::grpc::ServerContext* ctx,
              const ::message::ResetPasswordReq* req,
              ::message::ResetPasswordRsp* resp) {
                return service->ResetPassword(ctx, req, resp);
-             }, this)));
-  AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LogicService_method_names[2],
-      ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< LogicService::Service, ::message::LoginReq, ::message::LoginRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
-          [](LogicService::Service* service,
-             ::grpc::ServerContext* ctx,
-             const ::message::LoginReq* req,
-             ::message::LoginRsp* resp) {
-               return service->Login(ctx, req, resp);
-             }, this)));
-  AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LogicService_method_names[3],
-      ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< LogicService::Service, ::message::VerifyTokenReq, ::message::VerifyTokenRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
-          [](LogicService::Service* service,
-             ::grpc::ServerContext* ctx,
-             const ::message::VerifyTokenReq* req,
-             ::message::VerifyTokenRsp* resp) {
-               return service->VerifyToken(ctx, req, resp);
              }, this)));
 }
 
@@ -247,21 +212,14 @@ LogicService::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
+::grpc::Status LogicService::Service::LoginUser(::grpc::ServerContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
 ::grpc::Status LogicService::Service::ResetPassword(::grpc::ServerContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response) {
-  (void) context;
-  (void) request;
-  (void) response;
-  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-}
-
-::grpc::Status LogicService::Service::Login(::grpc::ServerContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response) {
-  (void) context;
-  (void) request;
-  (void) response;
-  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-}
-
-::grpc::Status LogicService::Service::VerifyToken(::grpc::ServerContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -132,3 +132,52 @@ int MysqlDao::ResetPassword(const std::string& email, const std::string& verifyc
 		return message::ErrorCodes::PasswdUpFailed; // 对应 ErrorCodes::PasswdUpFailed
 	}
 }
+
+bool MysqlDao::CheckPassword(const std::string& email, const std::string& pwd, UserInfo& userInfo)
+{
+	auto con = _mysqlPool->getConnection();
+	if (con == nullptr)
+	{
+		return false;
+	}
+
+	Defer defer([this, &con](){
+		_mysqlPool->returnConnection(std::move(con));
+		});
+
+	try {
+		// 准备 SQL: 查询 uid, name, passwd , avatar
+		std::unique_ptr<sql::PreparedStatement> pstmt(
+			con->prepareStatement("SELECT id, name, email, passwd, avatar FROM user WHERE email = ?"));
+
+		pstmt->setString(1, email);
+
+		// 执行查询
+		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+
+		if (res->next())
+		{
+			// 取出数据库存的密码
+			std::string db_pwd = res->getString("passwd");
+			if (pwd != db_pwd)
+			{
+				return false; // 密码不匹配
+			}
+
+			// 密码匹配，填充 userInfo
+			userInfo.uid = res->getInt("id");
+			userInfo.name = res->getString("name");
+			userInfo.email = res->getString("email");
+			userInfo.password = db_pwd;
+			userInfo.avatar = res->getString("avatar"); // 获取头像
+
+			return true;
+		}
+		return false; // 用户不存在
+	}
+	catch (sql::SQLException& e)
+	{
+		std::cerr << "[MysqlDao] CheckPassword error: " << e.what() << std::endl;
+		return false;
+	}
+}

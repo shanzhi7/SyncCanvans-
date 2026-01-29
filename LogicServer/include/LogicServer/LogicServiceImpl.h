@@ -26,4 +26,10 @@ public:
 
     // 重写 .proto 中定义的 ResetPassword 方法
     virtual Status ResetPassword(ServerContext* context, const ResetPasswordReq* request, ResetPasswordRsp* reply) override;
+
+    //重写 .proto 中定义的 Login 方法
+    virtual Status Login(ServerContext* context, const LoginReq* request, LoginRsp* reply) override;
+
+    //辅助函数，获取连接数少的CanvasServerInfo
+    bool GetCanvasServerInfo(std::string& host, std::string& port);
 };

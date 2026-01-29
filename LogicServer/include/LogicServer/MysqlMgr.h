@@ -12,6 +12,9 @@ public:
 		int sex = 0, const std::string& avatar = "", const std::string& signature = "");
 	//重置密码
 	int ResetPassword(const std::string& email, const std::string& verifycode, const std::string& password);
+
+	//校验密码
+	bool CheckPassword(const std::string& email, const std::string& pwd, UserInfo& userInfo);
 private:
 	MysqlMgr();			//私有构造函数
 	MysqlDao _dao;		//数据访问对象

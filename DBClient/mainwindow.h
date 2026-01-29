@@ -18,6 +18,7 @@
 #include "loginwidget.h"
 #include "registerwidget.h"
 #include "resetwidget.h"
+#include "canvas.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -42,6 +43,7 @@ private:
     LoginWidget* login_widget;                      //登录窗口
     RegisterWidget* register_widget;                //注册窗口
     ResetWidget* reset_widget;                      //重置窗口
+    Canvas* canvas;                                 //画布窗口
 
 
     void initBubbles(int count);                    //初始化气泡
@@ -59,5 +61,6 @@ private slots:
     void slotSwitchLoginFromReg();                  //注册界面切换登录界面(register->login)
     void slotSwitchLoginFromReset();                //重置密码页面切换登录界面(reset->login)
     void slotSwitchResetFromLogin();                //切换重置密码槽函数(login->reset)
+    void slotSwitchCanvas();                        //切换Canvas页面(login->canvas)
 };
 #endif // MAINWINDOW_H

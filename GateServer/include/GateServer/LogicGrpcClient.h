@@ -27,6 +27,7 @@ public:
 
     RegisterRsp RegisterUser(RegisterReq req);              //注册用户
     ResetPasswordRsp ResetPassword(ResetPasswordReq req);   //重置密码
+    LoginRsp Login(LoginReq req);                           //登录
 
 private:
     LogicGrpcClient();           //私有化构造函数

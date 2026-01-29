@@ -1,5 +1,6 @@
 #pragma once
 #include "LogicServer/MysqlPool.h"
+#include "LogicServer/data.h"
 
 class MysqlDao
 {
@@ -13,6 +14,11 @@ public:
 
 	//÷ÿ÷√√‹¬Î
 	int ResetPassword(const std::string& email, const std::string& verifycode, const std::string& password);
+
+	//–£—È√‹¬Î
+	bool CheckPassword(const std::string& email, const std::string& pwd, UserInfo& userInfo);
+
+
 
 private:
 	std::unique_ptr<MysqlPool> _mysqlPool;

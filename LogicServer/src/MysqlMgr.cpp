@@ -20,3 +20,8 @@ int MysqlMgr::ResetPassword(const std::string& email, const std::string& verifyc
 {
     return _dao.ResetPassword(email, verifycode, password);
 }
+
+bool MysqlMgr::CheckPassword(const std::string& email, const std::string& pwd, UserInfo& userInfo)
+{
+    return _dao.CheckPassword(email, pwd, userInfo);
+}

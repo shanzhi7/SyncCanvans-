@@ -196,6 +196,74 @@ LogicSystem::LogicSystem()	//构造函数
         boost::beast::ostream(connection->_response.body()) << jsonstr;
         return true;
 		});
+
+	// 注册登录请求
+	RegPost("/user_login", [](std::shared_ptr<HttpConnection> connection) {
+		auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());
+		std::cout << "receive body is " << body_str << std::endl;
+		connection->_response.set(boost::beast::http::field::content_type, "application/json");
+		Json::Value root;
+		Json::Reader reader;
+		Json::Value src_root;
+		bool parse_success = reader.parse(body_str, src_root);
+
+		if (!parse_success)
+		{
+			std::cout << "Failed to parse JSON data!" << std::endl;
+			root["error"] = message::ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			boost::beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
+		// 校验必要字段
+		if (!src_root.isMember("email") || !src_root.isMember("password"))
+		{
+			std::cout << "[GateServer] Login missing required JSON fields!" << std::endl;
+			root["error"] = message::ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			boost::beast::ostream(connection->_response.body()) << jsonstr;
+			return true;
+		}
+
+		auto email = src_root["email"].asString();
+		auto pwd = src_root["password"].asString();
+
+		std::cout << "[GateServer] Client login email is " << email << std::endl;
+
+		// 构造 gRPC 请求
+		LoginReq req;
+		req.set_email(email);
+		req.set_passwd(pwd);
+
+		// 发送 gRPC 请求给 LogicServer
+		LoginRsp rsp = LogicGrpcClient::getInstance()->Login(req);
+
+		// 构造返回给 Qt 的 JSON
+		root["error"] = rsp.error();
+		root["email"] = email;
+		root["server"] = "GateServer";
+
+		if (rsp.error() == message::ErrorCodes::SUCCESS)
+		{
+			// 登录成功，返回核心数据
+			root["uid"] = rsp.uid();
+			root["token"] = rsp.token();
+			root["name"] = rsp.name();
+			root["avatar"] = rsp.avatar(); // 把头像也返回去
+			root["host"] = rsp.host();     // CanvasServer IP
+			root["port"] = rsp.port();     // CanvasServer Port
+			std::cout << "[GateServer] User login success: " << email << " -> " << rsp.host() << ":" << rsp.port() << std::endl;
+		}
+		else
+		{
+			std::cout << "[GateServer] User login failed: " << email << " ErrorCode: " << rsp.error() << std::endl;
+		}
+
+		std::string jsonstr = root.toStyledString();
+		boost::beast::ostream(connection->_response.body()) << jsonstr;
+		return true;
+		});
 }
 
 void LogicSystem::RegGet(std::string url, HttpHandler handler)

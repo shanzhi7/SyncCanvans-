@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Canvas</class>
+ <widget class="QMainWindow" name="Canvas">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1197</width>
+    <height>718</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* ================= 1. 全局架构：高级灰蓝底色 ================= */
+QMainWindow {
+    background-color: #f7f9fc; /* 灰蓝背景，制造层次感 */
+}
+
+/* 隐藏分割线视觉效果，但保留物理拖拽，让背景透出来 */
+QMainWindow::separator {
+    background-color: #f7f9fc;
+    width: 6px;  /* 稍微宽一点，让缝隙更明显，形成模块分离感 */
+    height: 6px;
+}
+QMainWindow::separator:hover {
+    background-color: #e0e6ed; /* 鼠标放上去稍微变深 */
+}
+
+/* 基础去边框：先把所有控件的丑陋默认边框去掉，后面单独加 */
+QGraphicsView, QTreeWidget, QListWidget, QTextBrowser, QLineEdit {
+    border: none;
+    background-color: #ffffff;
+    outline: none; /* 去掉选中时的虚线框 */
+}
+
+/* ================= 2. 顶部导航栏 (#topNavBar) ================= */
+#topNavBar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dcdcdc; /* 底部加一条稍深的线，把顶栏“托”起来 */
+}
+
+/* 顶部标题 */
+#topNavBar QLabel {
+    color: #333333;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: &quot;Microsoft YaHei UI&quot;, &quot;Segoe UI&quot;;
+    border: none;
+    background: transparent;
+    padding: 0 10px;
+}
+
+/* 顶部按钮 (文件、编辑) */
+#topNavBar QPushButton {
+    background: transparent;
+    border: none;
+    color: #555;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: &quot;Microsoft YaHei&quot;;
+}
+#topNavBar QPushButton:hover {
+    background-color: #f0f2f5;
+    color: #000;
+}
+#topNavBar QPushButton:pressed {
+    background-color: #e6e6e6;
+}
+
+/* ================= 3. 中间画板 (Canvas) ================= */
+QGraphicsView {
+    background-color: #ffffff;
+    /* 【视觉重心】边框颜色加深 */
+    border: 1px solid #c0c4cc; 
+    border-radius: 6px;
+    /* 关键：利用 margin 让画板四周露出一点灰色的背景 */
+    margin: 10px; 
+}
+
+/* ================= 4. 侧边栏架构 (Docks) ================= */
+QDockWidget {
+    border: none;
+    background-color: transparent; /* 让 Dock 自身透明 */
+}
+
+/* Dock 里面的实际容器变白 */
+QDockWidget &gt; QWidget {
+    background-color: #ffffff;
+    border-left: 1px solid #dcdcdc; /* 默认右侧 Dock 左边加线 */
+}
+
+/* 左侧工具栏 Dock 特殊处理 (线在右边) */
+#tool_dock &gt; QWidget {
+    border-left: none;
+    border-right: 1px solid #dcdcdc; 
+}
+
+/* ================= 5. 右侧聊天区域 (显形修复版) ================= */
+
+/* 聊天记录框 */
+QDockWidget QTextBrowser {
+    border: 1px solid #c0c4cc; /* 清晰的中灰边框 */
+    border-radius: 4px;
+    background-color: #ffffff;
+    margin-bottom: 8px;        /* 和下方输入框拉开距离 */
+}
+
+/* 聊天输入框 - 使用ID选择器强制生效 */
+#lineEdit {
+    border: 1px solid #c0c4cc; /* 【关键】实实在在的边框 */
+    background-color: #ffffff; /* 纯白背景 */
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: #333;
+    min-height: 20px;
+}
+/* 备用：如果上面的ID不对，这个类选择器也能兜底 */
+QDockWidget QLineEdit {
+    border: 1px solid #c0c4cc;
+    background-color: #ffffff;
+    border-radius: 4px;
+    padding: 6px 8px;
+}
+
+/* 输入框聚焦状态 */
+#lineEdit:focus, QDockWidget QLineEdit:focus {
+    border: 1px solid #0078d7; /* 选中变蓝 */
+    background-color: #ffffff;
+}
+
+/* 发送按钮 */
+QPushButton#pushButton {
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 4px; /* 和输入框保持一致的方圆角 */
+    padding: 6px 15px;
+    margin-left: 5px;
+    font-weight: bold;
+}
+QPushButton#pushButton:hover {
+    background-color: #0063b1;
+}
+QPushButton#pushButton:pressed {
+    background-color: #004e8c;
+}
+
+/* ================= 6. 右侧列表 (在线用户) ================= */
+QTreeWidget, QListWidget {
+    /* 修复：给整个列表加边框，或者保持无边框看个人喜好，这里加个细边框防散 */
+    border: 1px solid #e0e0e0; 
+    border-radius: 4px;
+    padding: 4px;
+/* 关键属性：让选中高亮覆盖到左侧的分支图标区域 */
+    show-decoration-selected: 1;
+/* 配合原本的选中颜色 */
+    selection-background-color: #e6f4ff;
+}
+
+QTreeWidget::item, QListWidget::item {
+	height: 40px; /* 给每行一点高度，不那么挤 */
+    padding: 6px;
+    margin: 2px 4px;
+    border: none;
+    border-radius: 4px;
+}
+
+/* 选中状态：清爽的淡蓝卡片 */
+QTreeWidget::item:selected, QListWidget::item:selected {
+    background-color: #e6f4ff;
+    color: #0078d7;
+}
+
+QTreeWidget::item:hover {
+    background-color: #f5f7fa;
+}
+
+/* ================= 7. 左侧工具栏按钮 ================= */
+#tool_dock QToolButton {
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    padding: 8px;
+    margin: 4px;
+}
+#tool_dock QToolButton:hover {
+    background-color: #f0f2f5;
+}
+#tool_dock QToolButton:checked {
+    background-color: #e6f4ff;
+    border: 1px solid #0078d7; /* 选中时加个蓝框 */
+}
+
+/* ================= 8. 顶部 Tab (切换条) - 纯色块风格 ================= */
+QMainWindow QTabBar::tab {
+    background: transparent;  /* 未选中时背景透明 */
+    border: none;
+    /* 增加一点内边距，让色块看起来饱满，不像文字挤在一起 */
+    padding: 6px 20px;       
+    color: #666;              /* 未选中时文字灰色 */
+    font-weight: bold;
+    
+    /* 【关键】给 Tab 之间留出缝隙，让它们变成独立的“按钮” */
+    margin-right: 5px;
+    margin-bottom: 2px;       /* 稍微留点底边距，不要贴死内容区 */
+    
+    /* 加个圆角，视觉效果更现代，不像死板的方块 */
+    border-radius: 4px;
+}
+
+/* 鼠标悬停在未选中的 Tab 上时 */
+QMainWindow QTabBar::tab:hover {
+    background-color: #e6f4ff; /* 极淡的蓝色背景，提示可以点击 */
+    color: #0078d7;
+}
+
+/* 【核心修改】选中状态：全蓝背景 + 白字 */
+QMainWindow QTabBar::tab:selected {
+    background-color: #0078d7; /* 你的主题蓝 */
+    color: #ffffff;            /* 纯白文字 */
+    border: none;              /* 彻底去掉之前的底部蓝线 */
+}
+/* ================= 9. 浮动窗口与标题栏美化 (极简版) ================= */
+
+/* 1. 标题栏：纯白、干净、带一条底线 */
+QDockWidget::title {
+    background-color: #ffffff;
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid #e0e0e0; /* 只有这一条淡淡的线 */
+    font-weight: bold;
+    color: #333;
+}
+
+/* 2. 主体：完全去掉边框，依靠系统自带的窗口阴影 */
+QDockWidget {
+    border: none;
+}
+
+/* 3. 按钮美化：保持精致 */
+QDockWidget::close-button, QDockWidget::float-button {
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    width: 24px;   
+    height: 24px;
+    subcontrol-position: center right; 
+    subcontrol-origin: padding;
+}
+
+/* 调整按钮位置 */
+QDockWidget::close-button { right: 5px; }
+QDockWidget::float-button { right: 35px; }
+
+/* 鼠标悬停 */
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background-color: #f0f2f5;
+}
+QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
+    background-color: #e6e6e6;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="1" column="0">
+     <widget class="QGraphicsView" name="graphicsView"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QFrame" name="topNavBar">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="file_btn">
+         <property name="maximumSize">
+          <size>
+           <width>70</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>文件</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="edit_btn">
+         <property name="maximumSize">
+          <size>
+           <width>70</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>编辑</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>SyncCanvas-房间号 1234 （未连接）</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1197</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_F">
+    <property name="title">
+     <string>文件&amp;F</string>
+    </property>
+    <addaction name="input_img"/>
+   </widget>
+   <addaction name="menu_F"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="tool_dock">
+   <property name="features">
+    <set>QDockWidget::NoDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::NoDockWidgetArea</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QToolButton" name="pen_tool">
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/res/pen.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="eraser_tool">
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/res/Eraser.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="color_tool">
+       <property name="styleSheet">
+        <string notr="true">border-image: url(:/res/color_wheel.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>486</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="user_dock">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QTreeWidget" name="treeWidget">
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string/>
+        </property>
+       </column>
+       <item>
+        <property name="text">
+         <string>我（MyName）</string>
+        </property>
+        <property name="icon">
+         <iconset resource="res.qrc">
+          <normaloff>:/res/deflaut_head.jpg</normaloff>:/res/deflaut_head.jpg</iconset>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="chat_dock">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QTextEdit" name="chat_textEdit"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLineEdit" name="input_edit"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="send_btn">
+         <property name="text">
+          <string>发送</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="input_img">
+   <property name="text">
+    <string>导入图片</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

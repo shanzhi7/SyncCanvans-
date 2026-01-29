@@ -20,10 +20,37 @@ enum ErrorCodes {
 	LoginErr = 1013;          // 登录失败(泛指)
 }
 
+// 消息ID (用于 TCP 长连接区分包类型)
+enum MsgID {
+    ID_UNKNOWN = 0;
+    ID_LOGIN_REQ = 1001;      // 客户端连接 CanvasServer 发送的认证包
+    ID_LOGIN_RSP = 1002;
+    ID_DRAW_REQ = 1003;       // 绘画请求
+    ID_DRAW_RSP = 1004;       // 广播绘画数据
+    ID_CLEAR_REQ = 1005;      // 清屏请求
+    ID_CLEAR_RSP = 1006;      // 广播清屏
+}
+
 // 验证码服务 (VarifyServer 实现)
 service VarifyService
 {
   rpc GetVarifyCode (GetVarifyReq) returns (GetVarifyRsp) {}
+}
+
+// 逻辑业务服务 (LogicServer 实现)
+service LogicService
+{
+    // 注册账号
+    rpc RegisterUser (RegisterReq) returns (RegisterRsp) {} 
+
+    // 重置密码
+    rpc ResetPassword (ResetPasswordReq) returns (ResetPasswordRsp) {}
+
+    // 登录账号 (同时返回 CanvasServer 地址和 Token)
+	rpc Login (LoginReq) returns (LoginRsp);
+
+    // [预留] 验证 Token (供 CanvasServer 内部调用，客户端不调这个)
+    rpc VerifyToken (VerifyTokenReq) returns (VerifyTokenRsp) {}
 }
 
 message GetVarifyReq
@@ -38,18 +65,6 @@ message GetVarifyRsp
   string code = 3;
 }
 
-// 逻辑业务服务 (LogicServer 实现)
-service LogicService
-{
-    // 注册账号
-    rpc RegisterUser (RegisterReq) returns (RegisterRsp) {}
-    
-    // 登录账号
-    rpc LoginUser (LoginReq) returns (LoginRsp) {}
-
-    // 重置密码
-    rpc ResetPassword (ResetPasswordReq) returns (ResetPasswordRsp) {}
-}
 
 // --- 注册相关消息 ---
 message RegisterReq
@@ -95,4 +110,17 @@ message LoginRsp
     string token = 3;        // 登录凭证(非常重要，用于后续长连接鉴权)
     string name = 4;         // 昵称
     string avatar = 5;       // 头像URL/路径
+    string host = 6;         // 告诉客户端去连哪个画板服
+    string port = 7;
+}
+
+message VerifyTokenReq {
+    int32 uid = 1;
+    string token = 2;
+}
+
+// --- Token 验证 (Server 内部交互用) ---
+message VerifyTokenRsp {
+    int32 error = 1; 
+    int32 uid = 2;
 }

@@ -4,7 +4,7 @@
 #ifndef GRPC_message_2eproto__INCLUDED
 #define GRPC_message_2eproto__INCLUDED
 
-#include "GateServer/message.pb.h"
+#include "CanvasServer/message.pb.h"
 
 #include <functional>
 #include <grpcpp/generic/async_generic_service.h>
@@ -253,6 +253,14 @@ class LogicService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::RegisterRsp>> PrepareAsyncRegisterUser(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::RegisterRsp>>(PrepareAsyncRegisterUserRaw(context, request, cq));
     }
+    // 登录账号
+    virtual ::grpc::Status LoginUser(::grpc::ClientContext* context, const ::message::LoginReq& request, ::message::LoginRsp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>> AsyncLoginUser(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>>(AsyncLoginUserRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>> PrepareAsyncLoginUser(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>>(PrepareAsyncLoginUserRaw(context, request, cq));
+    }
     // 重置密码
     virtual ::grpc::Status ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::message::ResetPasswordRsp* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::ResetPasswordRsp>> AsyncResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) {
@@ -261,37 +269,18 @@ class LogicService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::ResetPasswordRsp>> PrepareAsyncResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::ResetPasswordRsp>>(PrepareAsyncResetPasswordRaw(context, request, cq));
     }
-    // 登录账号 (同时返回 CanvasServer 地址和 Token)
-    virtual ::grpc::Status Login(::grpc::ClientContext* context, const ::message::LoginReq& request, ::message::LoginRsp* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>> AsyncLogin(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>>(AsyncLoginRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>> PrepareAsyncLogin(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>>(PrepareAsyncLoginRaw(context, request, cq));
-    }
-    // [预留] 验证 Token (供 CanvasServer 内部调用，客户端不调这个)
-    virtual ::grpc::Status VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::message::VerifyTokenRsp* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::VerifyTokenRsp>> AsyncVerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::VerifyTokenRsp>>(AsyncVerifyTokenRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::VerifyTokenRsp>> PrepareAsyncVerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::VerifyTokenRsp>>(PrepareAsyncVerifyTokenRaw(context, request, cq));
-    }
     class async_interface {
      public:
       virtual ~async_interface() {}
       // 注册账号
       virtual void RegisterUser(::grpc::ClientContext* context, const ::message::RegisterReq* request, ::message::RegisterRsp* response, std::function<void(::grpc::Status)>) = 0;
       virtual void RegisterUser(::grpc::ClientContext* context, const ::message::RegisterReq* request, ::message::RegisterRsp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // 登录账号
+      virtual void LoginUser(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void LoginUser(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // 重置密码
       virtual void ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response, std::function<void(::grpc::Status)>) = 0;
       virtual void ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      // 登录账号 (同时返回 CanvasServer 地址和 Token)
-      virtual void Login(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void Login(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      // [预留] 验证 Token (供 CanvasServer 内部调用，客户端不调这个)
-      virtual void VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -299,12 +288,10 @@ class LogicService final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::RegisterRsp>* AsyncRegisterUserRaw(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::RegisterRsp>* PrepareAsyncRegisterUserRaw(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>* AsyncLoginUserRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>* PrepareAsyncLoginUserRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::ResetPasswordRsp>* AsyncResetPasswordRaw(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::ResetPasswordRsp>* PrepareAsyncResetPasswordRaw(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>* AsyncLoginRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::LoginRsp>* PrepareAsyncLoginRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::VerifyTokenRsp>* AsyncVerifyTokenRaw(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::VerifyTokenRsp>* PrepareAsyncVerifyTokenRaw(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -316,6 +303,13 @@ class LogicService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::RegisterRsp>> PrepareAsyncRegisterUser(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::RegisterRsp>>(PrepareAsyncRegisterUserRaw(context, request, cq));
     }
+    ::grpc::Status LoginUser(::grpc::ClientContext* context, const ::message::LoginReq& request, ::message::LoginRsp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>> AsyncLoginUser(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>>(AsyncLoginUserRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>> PrepareAsyncLoginUser(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>>(PrepareAsyncLoginUserRaw(context, request, cq));
+    }
     ::grpc::Status ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::message::ResetPasswordRsp* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::ResetPasswordRsp>> AsyncResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::ResetPasswordRsp>>(AsyncResetPasswordRaw(context, request, cq));
@@ -323,31 +317,15 @@ class LogicService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::ResetPasswordRsp>> PrepareAsyncResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::ResetPasswordRsp>>(PrepareAsyncResetPasswordRaw(context, request, cq));
     }
-    ::grpc::Status Login(::grpc::ClientContext* context, const ::message::LoginReq& request, ::message::LoginRsp* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>> AsyncLogin(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>>(AsyncLoginRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>> PrepareAsyncLogin(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>>(PrepareAsyncLoginRaw(context, request, cq));
-    }
-    ::grpc::Status VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::message::VerifyTokenRsp* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::VerifyTokenRsp>> AsyncVerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::VerifyTokenRsp>>(AsyncVerifyTokenRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::VerifyTokenRsp>> PrepareAsyncVerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::VerifyTokenRsp>>(PrepareAsyncVerifyTokenRaw(context, request, cq));
-    }
     class async final :
       public StubInterface::async_interface {
      public:
       void RegisterUser(::grpc::ClientContext* context, const ::message::RegisterReq* request, ::message::RegisterRsp* response, std::function<void(::grpc::Status)>) override;
       void RegisterUser(::grpc::ClientContext* context, const ::message::RegisterReq* request, ::message::RegisterRsp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void LoginUser(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, std::function<void(::grpc::Status)>) override;
+      void LoginUser(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, ::grpc::ClientUnaryReactor* reactor) override;
       void ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response, std::function<void(::grpc::Status)>) override;
       void ResetPassword(::grpc::ClientContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void Login(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, std::function<void(::grpc::Status)>) override;
-      void Login(::grpc::ClientContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response, std::function<void(::grpc::Status)>) override;
-      void VerifyToken(::grpc::ClientContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -361,16 +339,13 @@ class LogicService final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::message::RegisterRsp>* AsyncRegisterUserRaw(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::message::RegisterRsp>* PrepareAsyncRegisterUserRaw(::grpc::ClientContext* context, const ::message::RegisterReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>* AsyncLoginUserRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>* PrepareAsyncLoginUserRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::message::ResetPasswordRsp>* AsyncResetPasswordRaw(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::message::ResetPasswordRsp>* PrepareAsyncResetPasswordRaw(::grpc::ClientContext* context, const ::message::ResetPasswordReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>* AsyncLoginRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::message::LoginRsp>* PrepareAsyncLoginRaw(::grpc::ClientContext* context, const ::message::LoginReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::message::VerifyTokenRsp>* AsyncVerifyTokenRaw(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::message::VerifyTokenRsp>* PrepareAsyncVerifyTokenRaw(::grpc::ClientContext* context, const ::message::VerifyTokenReq& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_RegisterUser_;
+    const ::grpc::internal::RpcMethod rpcmethod_LoginUser_;
     const ::grpc::internal::RpcMethod rpcmethod_ResetPassword_;
-    const ::grpc::internal::RpcMethod rpcmethod_Login_;
-    const ::grpc::internal::RpcMethod rpcmethod_VerifyToken_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -380,12 +355,10 @@ class LogicService final {
     virtual ~Service();
     // 注册账号
     virtual ::grpc::Status RegisterUser(::grpc::ServerContext* context, const ::message::RegisterReq* request, ::message::RegisterRsp* response);
+    // 登录账号
+    virtual ::grpc::Status LoginUser(::grpc::ServerContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response);
     // 重置密码
     virtual ::grpc::Status ResetPassword(::grpc::ServerContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response);
-    // 登录账号 (同时返回 CanvasServer 地址和 Token)
-    virtual ::grpc::Status Login(::grpc::ServerContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response);
-    // [预留] 验证 Token (供 CanvasServer 内部调用，客户端不调这个)
-    virtual ::grpc::Status VerifyToken(::grpc::ServerContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_RegisterUser : public BaseClass {
@@ -408,12 +381,32 @@ class LogicService final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_LoginUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_LoginUser() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_LoginUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LoginUser(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestLoginUser(::grpc::ServerContext* context, ::message::LoginReq* request, ::grpc::ServerAsyncResponseWriter< ::message::LoginRsp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_ResetPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ResetPassword() {
-      ::grpc::Service::MarkMethodAsync(1);
+      ::grpc::Service::MarkMethodAsync(2);
     }
     ~WithAsyncMethod_ResetPassword() override {
       BaseClassMustBeDerivedFromService(this);
@@ -424,50 +417,10 @@ class LogicService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestResetPassword(::grpc::ServerContext* context, ::message::ResetPasswordReq* request, ::grpc::ServerAsyncResponseWriter< ::message::ResetPasswordRsp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_Login : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_Login() {
-      ::grpc::Service::MarkMethodAsync(2);
-    }
-    ~WithAsyncMethod_Login() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status Login(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestLogin(::grpc::ServerContext* context, ::message::LoginReq* request, ::grpc::ServerAsyncResponseWriter< ::message::LoginRsp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  template <class BaseClass>
-  class WithAsyncMethod_VerifyToken : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_VerifyToken() {
-      ::grpc::Service::MarkMethodAsync(3);
-    }
-    ~WithAsyncMethod_VerifyToken() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status VerifyToken(::grpc::ServerContext* /*context*/, const ::message::VerifyTokenReq* /*request*/, ::message::VerifyTokenRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestVerifyToken(::grpc::ServerContext* context, ::message::VerifyTokenReq* request, ::grpc::ServerAsyncResponseWriter< ::message::VerifyTokenRsp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  typedef WithAsyncMethod_RegisterUser<WithAsyncMethod_ResetPassword<WithAsyncMethod_Login<WithAsyncMethod_VerifyToken<Service > > > > AsyncService;
+  typedef WithAsyncMethod_RegisterUser<WithAsyncMethod_LoginUser<WithAsyncMethod_ResetPassword<Service > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_RegisterUser : public BaseClass {
    private:
@@ -496,18 +449,45 @@ class LogicService final {
       ::grpc::CallbackServerContext* /*context*/, const ::message::RegisterReq* /*request*/, ::message::RegisterRsp* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_LoginUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_LoginUser() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::message::LoginReq, ::message::LoginRsp>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response) { return this->LoginUser(context, request, response); }));}
+    void SetMessageAllocatorFor_LoginUser(
+        ::grpc::MessageAllocator< ::message::LoginReq, ::message::LoginRsp>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::LoginReq, ::message::LoginRsp>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_LoginUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LoginUser(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* LoginUser(
+      ::grpc::CallbackServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_ResetPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ResetPassword() {
-      ::grpc::Service::MarkMethodCallback(1,
+      ::grpc::Service::MarkMethodCallback(2,
           new ::grpc::internal::CallbackUnaryHandler< ::message::ResetPasswordReq, ::message::ResetPasswordRsp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::message::ResetPasswordReq* request, ::message::ResetPasswordRsp* response) { return this->ResetPassword(context, request, response); }));}
     void SetMessageAllocatorFor_ResetPassword(
         ::grpc::MessageAllocator< ::message::ResetPasswordReq, ::message::ResetPasswordRsp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::message::ResetPasswordReq, ::message::ResetPasswordRsp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -522,61 +502,7 @@ class LogicService final {
     virtual ::grpc::ServerUnaryReactor* ResetPassword(
       ::grpc::CallbackServerContext* /*context*/, const ::message::ResetPasswordReq* /*request*/, ::message::ResetPasswordRsp* /*response*/)  { return nullptr; }
   };
-  template <class BaseClass>
-  class WithCallbackMethod_Login : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithCallbackMethod_Login() {
-      ::grpc::Service::MarkMethodCallback(2,
-          new ::grpc::internal::CallbackUnaryHandler< ::message::LoginReq, ::message::LoginRsp>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::message::LoginReq* request, ::message::LoginRsp* response) { return this->Login(context, request, response); }));}
-    void SetMessageAllocatorFor_Login(
-        ::grpc::MessageAllocator< ::message::LoginReq, ::message::LoginRsp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::LoginReq, ::message::LoginRsp>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~WithCallbackMethod_Login() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status Login(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* Login(
-      ::grpc::CallbackServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithCallbackMethod_VerifyToken : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithCallbackMethod_VerifyToken() {
-      ::grpc::Service::MarkMethodCallback(3,
-          new ::grpc::internal::CallbackUnaryHandler< ::message::VerifyTokenReq, ::message::VerifyTokenRsp>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::message::VerifyTokenReq* request, ::message::VerifyTokenRsp* response) { return this->VerifyToken(context, request, response); }));}
-    void SetMessageAllocatorFor_VerifyToken(
-        ::grpc::MessageAllocator< ::message::VerifyTokenReq, ::message::VerifyTokenRsp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::VerifyTokenReq, ::message::VerifyTokenRsp>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~WithCallbackMethod_VerifyToken() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status VerifyToken(::grpc::ServerContext* /*context*/, const ::message::VerifyTokenReq* /*request*/, ::message::VerifyTokenRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* VerifyToken(
-      ::grpc::CallbackServerContext* /*context*/, const ::message::VerifyTokenReq* /*request*/, ::message::VerifyTokenRsp* /*response*/)  { return nullptr; }
-  };
-  typedef WithCallbackMethod_RegisterUser<WithCallbackMethod_ResetPassword<WithCallbackMethod_Login<WithCallbackMethod_VerifyToken<Service > > > > CallbackService;
+  typedef WithCallbackMethod_RegisterUser<WithCallbackMethod_LoginUser<WithCallbackMethod_ResetPassword<Service > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_RegisterUser : public BaseClass {
@@ -596,52 +522,35 @@ class LogicService final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_LoginUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_LoginUser() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_LoginUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LoginUser(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_ResetPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ResetPassword() {
-      ::grpc::Service::MarkMethodGeneric(1);
+      ::grpc::Service::MarkMethodGeneric(2);
     }
     ~WithGenericMethod_ResetPassword() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
     ::grpc::Status ResetPassword(::grpc::ServerContext* /*context*/, const ::message::ResetPasswordReq* /*request*/, ::message::ResetPasswordRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_Login : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_Login() {
-      ::grpc::Service::MarkMethodGeneric(2);
-    }
-    ~WithGenericMethod_Login() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status Login(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_VerifyToken : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_VerifyToken() {
-      ::grpc::Service::MarkMethodGeneric(3);
-    }
-    ~WithGenericMethod_VerifyToken() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status VerifyToken(::grpc::ServerContext* /*context*/, const ::message::VerifyTokenReq* /*request*/, ::message::VerifyTokenRsp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -667,12 +576,32 @@ class LogicService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_LoginUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_LoginUser() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_LoginUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LoginUser(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestLoginUser(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_ResetPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ResetPassword() {
-      ::grpc::Service::MarkMethodRaw(1);
+      ::grpc::Service::MarkMethodRaw(2);
     }
     ~WithRawMethod_ResetPassword() override {
       BaseClassMustBeDerivedFromService(this);
@@ -683,47 +612,7 @@ class LogicService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestResetPassword(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_Login : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_Login() {
-      ::grpc::Service::MarkMethodRaw(2);
-    }
-    ~WithRawMethod_Login() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status Login(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestLogin(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_VerifyToken : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_VerifyToken() {
-      ::grpc::Service::MarkMethodRaw(3);
-    }
-    ~WithRawMethod_VerifyToken() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status VerifyToken(::grpc::ServerContext* /*context*/, const ::message::VerifyTokenReq* /*request*/, ::message::VerifyTokenRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestVerifyToken(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -749,12 +638,34 @@ class LogicService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_LoginUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_LoginUser() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->LoginUser(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_LoginUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status LoginUser(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* LoginUser(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_ResetPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ResetPassword() {
-      ::grpc::Service::MarkMethodRawCallback(1,
+      ::grpc::Service::MarkMethodRawCallback(2,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ResetPassword(context, request, response); }));
@@ -768,50 +679,6 @@ class LogicService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* ResetPassword(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithRawCallbackMethod_Login : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawCallbackMethod_Login() {
-      ::grpc::Service::MarkMethodRawCallback(2,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Login(context, request, response); }));
-    }
-    ~WithRawCallbackMethod_Login() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status Login(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* Login(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithRawCallbackMethod_VerifyToken : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawCallbackMethod_VerifyToken() {
-      ::grpc::Service::MarkMethodRawCallback(3,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->VerifyToken(context, request, response); }));
-    }
-    ~WithRawCallbackMethod_VerifyToken() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status VerifyToken(::grpc::ServerContext* /*context*/, const ::message::VerifyTokenReq* /*request*/, ::message::VerifyTokenRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* VerifyToken(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -842,12 +709,39 @@ class LogicService final {
     virtual ::grpc::Status StreamedRegisterUser(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::RegisterReq,::message::RegisterRsp>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_LoginUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_LoginUser() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::message::LoginReq, ::message::LoginRsp>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::message::LoginReq, ::message::LoginRsp>* streamer) {
+                       return this->StreamedLoginUser(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_LoginUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status LoginUser(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedLoginUser(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::LoginReq,::message::LoginRsp>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_ResetPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ResetPassword() {
-      ::grpc::Service::MarkMethodStreamed(1,
+      ::grpc::Service::MarkMethodStreamed(2,
         new ::grpc::internal::StreamedUnaryHandler<
           ::message::ResetPasswordReq, ::message::ResetPasswordRsp>(
             [this](::grpc::ServerContext* context,
@@ -868,63 +762,9 @@ class LogicService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedResetPassword(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::ResetPasswordReq,::message::ResetPasswordRsp>* server_unary_streamer) = 0;
   };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_Login : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_Login() {
-      ::grpc::Service::MarkMethodStreamed(2,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::message::LoginReq, ::message::LoginRsp>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::message::LoginReq, ::message::LoginRsp>* streamer) {
-                       return this->StreamedLogin(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_Login() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status Login(::grpc::ServerContext* /*context*/, const ::message::LoginReq* /*request*/, ::message::LoginRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedLogin(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::LoginReq,::message::LoginRsp>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_VerifyToken : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_VerifyToken() {
-      ::grpc::Service::MarkMethodStreamed(3,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::message::VerifyTokenReq, ::message::VerifyTokenRsp>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::message::VerifyTokenReq, ::message::VerifyTokenRsp>* streamer) {
-                       return this->StreamedVerifyToken(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_VerifyToken() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status VerifyToken(::grpc::ServerContext* /*context*/, const ::message::VerifyTokenReq* /*request*/, ::message::VerifyTokenRsp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedVerifyToken(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::VerifyTokenReq,::message::VerifyTokenRsp>* server_unary_streamer) = 0;
-  };
-  typedef WithStreamedUnaryMethod_RegisterUser<WithStreamedUnaryMethod_ResetPassword<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_VerifyToken<Service > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_RegisterUser<WithStreamedUnaryMethod_LoginUser<WithStreamedUnaryMethod_ResetPassword<Service > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_RegisterUser<WithStreamedUnaryMethod_ResetPassword<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_VerifyToken<Service > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_RegisterUser<WithStreamedUnaryMethod_LoginUser<WithStreamedUnaryMethod_ResetPassword<Service > > > StreamedService;
 };
 
 }  // namespace message
