@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package message;
+
+//公共错误码定义(与 C++ 里的 enum 保持一致)
+enum ErrorCodes {
+	SUCCESS = 0;
+	Error_Json = 1001;        // Json解析错误
+	RPCFailed = 1002;         // RPC请求错误
+	VarifyExpired = 1003;     // 验证码过期
+	VarifyCodeErr = 1004;     // 验证码错误
+	UserExist = 1005;         // 用户已经存在
+	PasswdErr = 1006;         // 密码错误
+	EmailNotMatch = 1007;     // 邮箱不匹配
+	PasswdUpFailed = 1008;    // 更新密码失败
+	PasswdInvalid = 1009;     // 密码格式无效
+	TokenInvalid = 1010;      // Token无效
+	UidInvalid = 1011;        // UID无效
+	UserNotExist = 1012;      // 用户不存在
+	LoginErr = 1013;          // 登录失败(泛指)
+}
+
+// 消息ID (用于 TCP 长连接区分包类型)
+enum MsgID {
+    ID_UNKNOWN = 0;
+    ID_LOGIN_REQ = 1001;      // 客户端连接 CanvasServer 发送的认证包
+    ID_LOGIN_RSP = 1002;
+    ID_DRAW_REQ = 1003;       // 绘画请求
+    ID_DRAW_RSP = 1004;       // 广播绘画数据
+    ID_CLEAR_REQ = 1005;      // 清屏请求
+    ID_CLEAR_RSP = 1006;      // 广播清屏
+}
+
+// 验证码服务 (VarifyServer 实现)
+service VarifyService
+{
+  rpc GetVarifyCode (GetVarifyReq) returns (GetVarifyRsp) {}
+}
+
+// 逻辑业务服务 (LogicServer 实现)
+service LogicService
+{
+    // 注册账号
+    rpc RegisterUser (RegisterReq) returns (RegisterRsp) {} 
+
+    // 重置密码
+    rpc ResetPassword (ResetPasswordReq) returns (ResetPasswordRsp) {}
+
+    // 登录账号 (同时返回 CanvasServer 地址和 Token)
+	rpc Login (LoginReq) returns (LoginRsp);
+
+    // [预留] 验证 Token (供 CanvasServer 内部调用，客户端不调这个)
+    rpc VerifyToken (VerifyTokenReq) returns (VerifyTokenRsp) {}
+}
+
+message GetVarifyReq
+{
+  string email = 1;
+}
+
+message GetVarifyRsp
+{
+  int32 error = 1;
+  string email = 2;
+  string code = 3;
+}
+
+
+// --- 注册相关消息 ---
+message RegisterReq
+{
+    string name = 1;         // 昵称
+    string email = 2;        // 邮箱
+    string passwd = 3;       // 密码(通常是加密后的)
+    string confirm_pwd = 4;  // 确认密码(可选，通常在客户端或网关层校验，但传过来也没事)
+    string varifycode = 5;   // 用户输入的验证码(用于逻辑服校验Redis)
+}
+
+message RegisterRsp
+{
+    int32 error = 1;         // 错误码
+    int32 uid = 2;           // 注册成功后返回的新用户ID
+}
+
+// 重置密码
+message ResetPasswordReq
+{
+    string email = 1;        // 邮箱
+    string varifycode = 2;   // 验证码
+    string passwd = 3;       // 新密码
+    string confirm_pwd = 4;  // 确认新密码
+}
+
+message ResetPasswordRsp
+{
+    int32 error = 1;         // 错误码
+}
+
+// --- 登录相关消息 ---
+message LoginReq
+{
+    string email = 1;
+    string passwd = 2;
+}
+
+message LoginRsp
+{
+    int32 error = 1;
+    int32 uid = 2;           // 用户ID
+    string token = 3;        // 登录凭证(非常重要，用于后续长连接鉴权)
+    string name = 4;         // 昵称
+    string avatar = 5;       // 头像URL/路径
+    string host = 6;         // 告诉客户端去连哪个画板服
+    string port = 7;
+}
+
+message VerifyTokenReq {
+    int32 uid = 1;
+    string token = 2;
+}
+
+// --- Token 验证 (Server 内部交互用) ---
+message VerifyTokenRsp {
+    int32 error = 1; 
+    int32 uid = 2;
+}

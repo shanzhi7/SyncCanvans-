@@ -1,0 +1,33 @@
+#pragma once
+#include <string>
+#include <map>
+#include <vector>
+#include <mutex>
+#include <memory>
+#include <iostream>
+
+// 前置声明，避免循环引用
+class CSession;
+
+class Room : public std::enable_shared_from_this<Room>
+{
+public:
+	Room(const std::string& roomId);
+	~Room();
+
+	std::string GetRoomId() const;								//获取房间ID
+	void Join(std::shared_ptr<CSession> session);				//加入房间
+	void Leave(int uid);										//用户离开
+
+	// 广播消息
+	void Broadcast(const std::string& data, int msg_id, int exclude_uid = 0);	//exclude_uid,排除自己
+
+private:
+	std::string _room_id;
+	std::mutex _mutex;		//// 互斥锁：保护 _sessions 和 _history
+	std::map<int, std::shared_ptr<CSession>> _sessions;	// 房间内的用户列表: UID -> Session
+
+	// 【画板关键】历史笔迹
+	// 暂存所有画画的指令，新用户进来时要把这些发给他，否则他看到的是白板
+	std::vector<std::string> _history;
+};

@@ -35,7 +35,7 @@ private:
     QMap<ReqId,std::function<void(QJsonObject)>> _handlers_map;        //服务器回包处理函数存储
 
 
-    QList<std::function<bool()>> _validators;           //// 存储所有的验证函数
+    QList<std::function<bool()>> _validators;           // 存储所有的验证函数
 
     // 通用绑定函数
     void bindValidator(QLineEdit *input, const QString &pattern, const QString &errMsg);
@@ -50,10 +50,13 @@ signals:
     void switchRegister();  //发送切换注册页面信号
     void switchReset();     //发送切换重置密码页面信号
     void switchCanvas();    //发送切换Canvas页面信号
+
+    void sig_connect_tcp(ServerInfo si);    //发送连接CanvasServer信号
 private slots:
     void on_login_btn_clicked();
 
-    void slot_login_mod_finish(ReqId reqid,QString res,ErrorCodes err);
+    void slot_login_mod_finish(ReqId reqid,QString res,ErrorCodes err); // 登录http请求完成，获取token
+    void slot_tcp_con_finish(bool bsuccess);                            // tcp连接成功槽函数，正式尝试登录
 };
 
 #endif // LOGINWIDGET_H

@@ -1,6 +1,8 @@
 #include "loginwidget.h"
 #include "ui_loginwidget.h"
 #include "httpmgr.h"
+#include "tcpmgr.h"
+#include "usermgr.h"
 #include <QRegularExpression>
 #include <QCryptographicHash>
 #include <QJsonObject>
@@ -30,6 +32,15 @@ LoginWidget::LoginWidget(QWidget *parent)
 
     //连接http请求完成信号
     connect(HttpMgr::getInstance().get(),&HttpMgr::sig_login_mod_finish,this,&LoginWidget::slot_login_mod_finish);
+
+    //连接tcp连接请求信号槽函数
+    connect(this,&LoginWidget::sig_connect_tcp,TcpMgr::getInstance().get(),&TcpMgr::slot_tcp_connect);
+
+    //CanvasServer连接成功，使用token发送登录请求
+    connect(TcpMgr::getInstance().get(),&TcpMgr::sig_con_success,this,&LoginWidget::slot_tcp_con_finish);
+
+    //tcp登录成功，连接发送切换canvas信号
+    connect(TcpMgr::getInstance().get(),&TcpMgr::sig_switch_canvas,this,&LoginWidget::switchCanvas);
 }
 
 LoginWidget::~LoginWidget()
@@ -90,6 +101,29 @@ void LoginWidget::slot_login_mod_finish(ReqId reqid, QString res, ErrorCodes err
     QJsonObject jsonObject = jsonDoc.object();
     //调用对应的处理函数
     _handlers_map[reqid](jsonObject);
+}
+
+void LoginWidget::slot_tcp_con_finish(bool bsuccess)
+{
+    if(bsuccess)
+    {
+        TipWidget::showTip(ui->draw_label,"服务器连接成功，正在登录...");
+
+        //序列化发送内容
+        QJsonObject jsonObj;
+        jsonObj["uid"] = UserMgr::getInstance()->getMyInfo()->_id;
+        jsonObj["token"] = UserMgr::getInstance()->getToken();
+
+        QJsonDocument jsonDoc(jsonObj);
+        QByteArray jsonString = jsonDoc.toJson(QJsonDocument::Indented);
+
+        //发送信号交给tcp管理者处理
+        emit TcpMgr::getInstance().get()->sig_send_data(ReqId::ID_CANVAS_LOGIN_REQ,jsonString);
+    }
+    else
+    {
+        TipWidget::showTip(ui->draw_label,"网络错误");
+    }
 }
 
 void LoginWidget::bindValidator(QLineEdit *input, const QString &pattern, const QString &errMsg)
@@ -161,13 +195,23 @@ void LoginWidget::initHandlerMap()
         auto host = jsonObj["host"].toString();
         auto port = jsonObj["port"].toString();
 
+        std::shared_ptr<UserInfo> info = std::make_shared<UserInfo>(uid,name,email,0,avator,"");
+        UserMgr::getInstance()->setMyInfo(info);        //设置客户端用户信息
+
         QString fromServer = jsonObj["server"].toString();
         qDebug()<<"email is "<<email<<"  from server: "<<fromServer<<"reqid is "<<"user login";
         qDebug()<<"uid is "<<uid<<" name is "<<name<<"avator is "<<avator<<"host is "<<host<<"port is "<<port;
 
-        emit switchCanvas();
-
         //todo... 连接canvasServer,跳转页面
+        ServerInfo si;          //存储准备连接的CanvasServer信息
+        si.Host = host;
+        si.Port = port;
+        si.Uid = uid;
+        si.Token = jsonObj["token"].toString();
+
+        UserMgr::getInstance()->setToken(si.Token);
+
+        emit sig_connect_tcp(si);
 
     });
 }

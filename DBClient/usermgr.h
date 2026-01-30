@@ -19,9 +19,14 @@ public:
     UserMgr();
 
     std::shared_ptr<UserInfo> getMyInfo();
+    QString getToken();
+
+    void setToken(QString& token);
+    void setMyInfo(std::shared_ptr<UserInfo> userInfo);
 
 private:
     std::shared_ptr<UserInfo> _my_info;         //当前客户端用户信息
+    QString token;
 };
 
 #endif // USERMGR_H

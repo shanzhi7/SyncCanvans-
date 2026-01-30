@@ -31,11 +31,15 @@ extern std::function<void(QWidget*)> repolish;  //用于刷新qss样式
 extern std::function<QPixmap(const QPixmap& src, const QColor& color)> applyColor;   //改变png图标颜色
 
 
-enum class ReqId{
+enum ReqId{
     ID_GET_VERIFY_CODE = 1001,                  //获取验证码
     ID_REGISTER = 1002,                         //注册账号
     ID_RESET_PWD = 1003,                        //重置密码
-    ID_LOGIN = 1004,                            //dengl
+    ID_LOGIN = 1004,                            //登录请求
+    ID_JOIN_ROOM_REQ = 1005,					//加入房间
+    ID_DRAW_REQ = 1006,							//绘画请求
+    ID_CANVAS_LOGIN_REQ = 1007,                 //登录到CanvasServer
+    ID_CANVAS_LOGIN_RSP = 1008,                 //登录CanvasServer回包
 };
 
 enum ErrorCodes{
@@ -48,6 +52,13 @@ enum Modules{
     MOD_REGISTER = 0,   //注册模块
     MOD_RESET = 1,      //重置密码模块
     MOD_LOGIN = 2       //登录模块
+};
+
+struct ServerInfo{
+    QString Host;
+    QString Port;
+    QString Token;
+    int Uid;
 };
 
 extern QString gate_url_prefix;

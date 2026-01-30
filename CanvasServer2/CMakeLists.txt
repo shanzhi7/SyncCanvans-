@@ -55,7 +55,7 @@ add_executable (CanvasServer "src/CanvasServer.cpp"
 "include/CanvasServer/RedisMgr.h" 
 "include/CanvasServer/Singleton.h"
 "src/ConfigMgr.cpp" 
-"src/RedisMgr.cpp" "include/CanvasServer/AsioIOServicePool.h" "src/AsioIOServicePool.cpp" "include/CanvasServer/CServer.h" "src/CServer.cpp" "include/CanvasServer/MsgNode.h" "include/CanvasServer/CSession.h" "src/CSession.cpp" "include/CanvasServer/LogicSystem.h" "src/LogicSystem.cpp" "include/CanvasServer/SessionMgr.h" "src/SessionMgr.cpp" "include/CanvasServer/Room.h" "src/Room.cpp" "include/CanvasServer/RoomMgr.h" "src/RoomMgr.cpp")
+"src/RedisMgr.cpp" "include/CanvasServer/AsioIOServicePool.h" "src/AsioIOServicePool.cpp" "include/CanvasServer/CServer.h" "src/CServer.cpp" "include/CanvasServer/MsgNode.h" "include/CanvasServer/CSession.h" "src/CSession.cpp" "include/CanvasServer/LogicSystem.h" "src/LogicSystem.cpp" "include/CanvasServer/SessionMgr.h" "src/SessionMgr.cpp" "include/CanvasServer/Room.h" "src/Room.cpp" "include/CanvasServer/RoomMgr.h" "src/RoomMgr.cpp" )
 
 # 5.1 头文件路径
 target_include_directories(CanvasServer PRIVATE
