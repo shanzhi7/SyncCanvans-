@@ -72,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     //连接登录成功切换Canvas页面
     connect(login_widget,&LoginWidget::switchCanvas,this,&MainWindow::slotSwitchCanvas);
+
+    emit login_widget->switchCanvas();      //测试
 }
 
 MainWindow::~MainWindow()

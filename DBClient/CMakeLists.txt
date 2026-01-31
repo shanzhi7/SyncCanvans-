@@ -7,6 +7,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 # 强制开启资源自动编译
 set(CMAKE_AUTORCC ON)
@@ -40,6 +41,8 @@ qt_add_executable(DBClient
     resetwidget.h resetwidget.cpp resetwidget.ui
     canvas.h canvas.cpp canvas.ui
     tcpmgr.h tcpmgr.cpp
+    newroomdialog.h newroomdialog.cpp newroomdialog.ui
+    paintscene.h paintscene.cpp
 )
 
 # ---> 请添加这段代码 <---
@@ -57,6 +60,7 @@ target_link_libraries(DBClient PRIVATE Qt6::Widgets)
 target_link_libraries(DBClient PRIVATE Qt6::Widgets)
 target_link_libraries(DBClient PRIVATE Qt6::Core)
 target_link_libraries(DBClient PRIVATE Qt6::Widgets)
+target_link_libraries(DBClient PRIVATE Qt6::Core)
 target_link_libraries(DBClient PRIVATE Qt6::Core)
 
 include(GNUInstallDirs)

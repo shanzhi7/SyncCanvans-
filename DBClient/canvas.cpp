@@ -2,48 +2,19 @@
 #include "ui_canvas.h"
 #include <QMouseEvent>
 #include <QApplication>
+#include "NewRoomDialog.h"
 
 Canvas::Canvas(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Canvas)
 {
     ui->setupUi(this);
-    ui->tool_dock->setWindowTitle("工具栏");
-    ui->chat_dock->setWindowTitle("聊天室");
-    ui->user_dock->setWindowTitle("在线用户");
 
-    this->setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);    //强制所有DockWidget标签页显示在顶部
-
-    //使用空widget替换tool_dock的标题栏
-    QWidget* emptyTitleTool = new QWidget();
-    ui->tool_dock->setTitleBarWidget(emptyTitleTool);
-
-    this->tabifyDockWidget(ui->chat_dock,ui->user_dock);                    // 两个dock叠在一起
-
-    //菜单栏
-    ui->input_img->setIcon(style()->standardIcon(QStyle::SP_FileIcon));     // 设置action图标
-    ui->menubar->setVisible(false);                                         //将菜单栏设置为不可见
-    ui->file_btn->setMenu(ui->menu_F); // 直接把原来的菜单对象赋给按钮！
-
-    //状态栏
-    QStatusBar *bar = this->statusBar();    //获取状态栏
-    // 左侧：坐标信息 (新建一个 Label)
-    QLabel *posLabel = new QLabel("X: 0, Y: 0", this);
-    posLabel->setStyleSheet("color: #666; font-size: 12px; padding-left: 10px;");
-    bar->addWidget(posLabel); // addWidget 加在左边
-
-    // 中间/右侧：缩放信息
-    QLabel *zoomLabel = new QLabel("缩放：100%", this);
-    zoomLabel->setStyleSheet("color: #333; font-weight: bold; font-size: 12px;");
-    bar->addPermanentWidget(zoomLabel); // addPermanentWidget 加在最右边
-
-    // 右侧：连接状态
-    QLabel *statusDot = new QLabel("● 未连接", this);
-    statusDot->setStyleSheet("color: #ff4d4d; font-size: 12px; padding-right: 10px;"); // 红色圆点
-    bar->addPermanentWidget(statusDot);
+    initCanvasUi();
 
     // 为整个程序安装事件过滤器
     qApp->installEventFilter(this);
+
 }
 
 Canvas::~Canvas()
@@ -96,3 +67,70 @@ bool Canvas::eventFilter(QObject *watched, QEvent *event)
 
     return QMainWindow::eventFilter(watched, event);
 }
+
+void Canvas::initCanvasUi()
+{
+    ui->tool_dock->setWindowTitle("工具栏");
+    ui->chat_dock->setWindowTitle("聊天室");
+    ui->user_dock->setWindowTitle("在线用户");
+
+    //初始化 paintScene(begin)
+    _paintScene = new PaintScene(this);
+    _paintScene->setSceneRect(0, 0, 5000, 5000);        //大小
+    //_paintScene->setBackgroundBrush(Qt::white);         //背景白色
+    ui->graphicsView->setScene(_paintScene);            //为view设置舞台
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);    //设置渲染质量，让线条抗锯齿（更平滑，不带狗牙）
+    ui->graphicsView->ensureVisible(0, 0, 10, 10);              // 强制把镜头聚焦在画板的左上角 (0,0),保证 (0,0) 这个点附近的区域是可见的
+    //初始化 paintScene(end)
+
+
+    this->setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);    //强制所有DockWidget标签页显示在顶部
+
+    //使用空widget替换tool_dock的标题栏
+    QWidget* emptyTitleTool = new QWidget();
+    ui->tool_dock->setTitleBarWidget(emptyTitleTool);
+
+    this->tabifyDockWidget(ui->chat_dock,ui->user_dock);                    // 两个dock叠在一起
+
+    //菜单栏
+    ui->input_img->setIcon(style()->standardIcon(QStyle::SP_FileIcon));     // 设置action图标
+    ui->menubar->setVisible(false);                                         //将菜单栏设置为不可见
+    ui->file_btn->setMenu(ui->menu_F); // 直接把原来的菜单对象赋给按钮！
+
+    //状态栏
+    QStatusBar *bar = this->statusBar();    //获取状态栏
+    // 左侧：坐标信息 (新建一个 Label)
+    QLabel *posLabel = new QLabel("X: 0, Y: 0", this);
+    posLabel->setStyleSheet("color: #666; font-size: 12px; padding-left: 10px;");
+    bar->addWidget(posLabel); // addWidget 加在左边
+
+    // 中间/右侧：缩放信息
+    QLabel *zoomLabel = new QLabel("缩放：100%", this);
+    zoomLabel->setStyleSheet("color: #333; font-weight: bold; font-size: 12px;");
+    bar->addPermanentWidget(zoomLabel); // addPermanentWidget 加在最右边
+
+    // 右侧：连接状态
+    QLabel *statusDot = new QLabel("● 未连接", this);
+    statusDot->setStyleSheet("color: #ff4d4d; font-size: 12px; padding-right: 10px;"); // 红色圆点
+    bar->addPermanentWidget(statusDot);
+}
+
+void Canvas::on_creatRoom_action_triggered()    //新建房间action槽函数
+{
+    NewRoomDialog dlg(this);
+    if(dlg.exec() == QDialog::Accepted) //点击的是创建按钮
+    {
+        QString roomName = dlg.getRoomName();       //获取房间名字
+        QSize canvasSize = dlg.getSelectedSize();   //获取用户选择的画布尺寸
+
+        //todo... 发送网络请求
+
+        //临时测试
+        this->_paintScene->setSceneRect(0,0,canvasSize.width(),canvasSize.height());
+
+        //更新标题栏
+        ui->title_label->setText(roomName + "-房间号：");
+    }
+
+}
+

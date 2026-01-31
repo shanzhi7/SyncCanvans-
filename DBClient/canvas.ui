@@ -73,7 +73,7 @@ QGraphicsView, QTreeWidget, QListWidget, QTextBrowser, QLineEdit {
 
 /* ================= 3. 中间画板 (Canvas) ================= */
 QGraphicsView {
-    background-color: #ffffff;
+    background-color: #f0f0f0;			/* 灰色背景*/
     /* 【视觉重心】边框颜色加深 */
     border: 1px solid #c0c4cc; 
     border-radius: 6px;
@@ -110,7 +110,7 @@ QDockWidget QTextBrowser {
 }
 
 /* 聊天输入框 - 使用ID选择器强制生效 */
-#lineEdit {
+#input_edit {
     border: 1px solid #c0c4cc; /* 【关键】实实在在的边框 */
     background-color: #ffffff; /* 纯白背景 */
     border-radius: 4px;
@@ -127,13 +127,13 @@ QDockWidget QLineEdit {
 }
 
 /* 输入框聚焦状态 */
-#lineEdit:focus, QDockWidget QLineEdit:focus {
+#input_edit:focus, QDockWidget QLineEdit:focus {
     border: 1px solid #0078d7; /* 选中变蓝 */
     background-color: #ffffff;
 }
 
 /* 发送按钮 */
-QPushButton#pushButton {
+QPushButton#send_btn {
     background-color: #0078d7;
     color: white;
     border: none;
@@ -338,7 +338,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="title_label">
          <property name="text">
           <string>SyncCanvas-房间号 1234 （未连接）</string>
          </property>
@@ -366,6 +366,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
      <string>文件&amp;F</string>
     </property>
     <addaction name="input_img"/>
+    <addaction name="creatRoom_action"/>
    </widget>
    <addaction name="menu_F"/>
   </widget>
@@ -513,7 +514,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
       <number>0</number>
      </property>
      <item>
-      <widget class="QTextEdit" name="chat_textEdit"/>
+      <widget class="QTextBrowser" name="chat_textBrowser"/>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -535,6 +536,14 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
   <action name="input_img">
    <property name="text">
     <string>导入图片</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="creatRoom_action">
+   <property name="text">
+    <string>新建房间</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
