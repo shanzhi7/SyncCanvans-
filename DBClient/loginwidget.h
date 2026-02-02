@@ -49,7 +49,7 @@ signals:
     void switchWelcome();   //发送切换欢迎页面信号
     void switchRegister();  //发送切换注册页面信号
     void switchReset();     //发送切换重置密码页面信号
-    void switchCanvas();    //发送切换Canvas页面信号
+    void switchLobby();    //发送切换Lobby页面信号
 
     void sig_connect_tcp(ServerInfo si);    //发送连接CanvasServer信号
 private slots:

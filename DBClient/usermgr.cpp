@@ -1,7 +1,7 @@
 #include "usermgr.h"
 
 UserMgr::UserMgr()
-    :token("")
+    :token(""),_my_info(nullptr)
 {
 
 }

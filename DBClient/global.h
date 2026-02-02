@@ -36,10 +36,14 @@ enum ReqId{
     ID_REGISTER = 1002,                         //注册账号
     ID_RESET_PWD = 1003,                        //重置密码
     ID_LOGIN = 1004,                            //登录请求
-    ID_JOIN_ROOM_REQ = 1005,					//加入房间
-    ID_DRAW_REQ = 1006,							//绘画请求
+    ID_JOIN_ROOM_REQ_DEL = 1005,
+    ID_DRAW_REQ_DEL = 1006,
     ID_CANVAS_LOGIN_REQ = 1007,                 //登录到CanvasServer
     ID_CANVAS_LOGIN_RSP = 1008,                 //登录CanvasServer回包
+    ID_CREAT_ROOM_REQ = 1009,                   //创建房间请求
+    ID_CREAT_ROOM_RSP = 1010,                   //创建房间回包
+    ID_JOIN_ROOM_REQ = 1010,                    //加入房间请求
+    ID_JOIN_ROOM_RSP = 1011,                    //加入房间回包
 };
 
 enum ErrorCodes{
@@ -59,6 +63,17 @@ struct ServerInfo{
     QString Port;
     QString Token;
     int Uid;
+};
+
+// 定义房间信息结构体
+struct RoomInfo {
+    QString id;
+    QString name;
+    int owner_uid;
+    QString host; // CanvasServer IP
+    int port;         // CanvasServer Port
+    int width = 1920;
+    int height = 1080;
 };
 
 extern QString gate_url_prefix;

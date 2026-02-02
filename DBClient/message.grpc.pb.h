@@ -4,7 +4,7 @@
 #ifndef GRPC_message_2eproto__INCLUDED
 #define GRPC_message_2eproto__INCLUDED
 
-#include "CanvasServer/message.pb.h"
+#include "message.pb.h"
 
 #include <functional>
 #include <grpcpp/generic/async_generic_service.h>

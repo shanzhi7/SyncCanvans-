@@ -35,6 +35,9 @@ private:
 	// 处理加入房间 (分配 Room)
 	void HandleJoinRoom(std::shared_ptr<CSession> session, const short& msg_id, const std::string& msg_data);
 
+	//创建房间
+	void HandleCreatRoom(std::shared_ptr<CSession> session, const short& msg_id, const std::string& msg_data);
+
 	std::thread _work_thread;							// 工作线程,用于回复客户端
 	std::queue<std::shared_ptr<LogicNode>> _msg_queue;	// 消息队列，存放session与recvNode
 	std::mutex _mutex;

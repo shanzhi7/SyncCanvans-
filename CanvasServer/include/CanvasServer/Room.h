@@ -16,6 +16,10 @@ public:
 	~Room();
 
 	std::string GetRoomId() const;								//获取房间ID
+
+	void SetRoomInfo(const std::string& name, int owner_uid);	//设置房间信息
+	int GetOwnerUid() const;									//获取房主ID
+
 	void Join(std::shared_ptr<CSession> session);				//加入房间
 	void Leave(int uid);										//用户离开
 
@@ -24,6 +28,9 @@ public:
 
 private:
 	std::string _room_id;
+	std::string _name;
+    int _owner_uid = 0;
+
 	std::mutex _mutex;		//// 互斥锁：保护 _sessions 和 _history
 	std::map<int, std::shared_ptr<CSession>> _sessions;	// 房间内的用户列表: UID -> Session
 

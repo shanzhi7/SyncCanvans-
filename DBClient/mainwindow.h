@@ -19,6 +19,7 @@
 #include "registerwidget.h"
 #include "resetwidget.h"
 #include "canvas.h"
+#include "lobbywidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -43,6 +44,7 @@ private:
     LoginWidget* login_widget;                      //登录窗口
     RegisterWidget* register_widget;                //注册窗口
     ResetWidget* reset_widget;                      //重置窗口
+    LobbyWidget* lobby_widget;                      //大厅窗口
     Canvas* canvas;                                 //画布窗口
 
 
@@ -61,6 +63,7 @@ private slots:
     void slotSwitchLoginFromReg();                  //注册界面切换登录界面(register->login)
     void slotSwitchLoginFromReset();                //重置密码页面切换登录界面(reset->login)
     void slotSwitchResetFromLogin();                //切换重置密码槽函数(login->reset)
-    void slotSwitchCanvas();                        //切换Canvas页面(login->canvas)
+    void slotSwitchLobby();                         //切换Lobby页面(login->Lobby)
+    void slotSwitchCanvas(std::shared_ptr<RoomInfo> room_info);     //切换canvas页面(lobby -> canvas)
 };
 #endif // MAINWINDOW_H

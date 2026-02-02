@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <string>
 
 //enum ErrorCodes
 //{
@@ -22,10 +23,14 @@ enum MSG_IDS {
 	ID_REGISTER = 1002,                         //注册账号
 	ID_RESET_PWD = 1003,                        //重置密码
 	ID_LOGIN_REQ = 1004,                        //登录
-	ID_JOIN_ROOM_REQ = 1005,					//加入房间
-	ID_DRAW_REQ = 1006,							//绘画请求
+	ID_JOIN_ROOM_REQ_DEL = 1005,
+	ID_DRAW_REQ_DEL = 1006,
 	ID_CANVAS_LOGIN_REQ = 1007,                 //登录到CanvasServer
 	ID_CANVAS_LOGIN_RSP = 1008,                 //登录CanvasServer回包
+	ID_CREAT_ROOM_REQ = 1009,                   //创建房间请求
+	ID_CREAT_ROOM_RSP = 1010,                   //创建房间回包
+	ID_JOIN_ROOM_REQ = 1010,                    //加入房间请求
+	ID_JOIN_ROOM_RSP = 1011,                    //加入房间回包
 };
 #define MAX_LENGTH 1024*2
 
@@ -47,6 +52,20 @@ public:
 private:
 	std::function<void()> _func;	//存储延迟执行的函数
 };
+
+// 定义房间信息结构体
+struct RoomInfo {
+	std::string id;
+	std::string name;
+	int owner_uid;
+	std::string host; // CanvasServer IP
+	int port;         // CanvasServer Port
+	int width = 1920;
+	int height = 1080;
+};
+
 #define CODEPREFIX "code_"
 #define TOKEN_PREFIX "utoken_"
 #define UID_PREFIX "uid_token_" //用于通过 uid 找 token
+#define ROOM_PREFIX "canvas:room:"
+#define ROOM_USERS_PREFIX "room_users:"

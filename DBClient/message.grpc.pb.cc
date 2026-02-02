@@ -2,8 +2,8 @@
 // If you make any local change, they will be lost.
 // source: message.proto
 
-#include "CanvasServer/message.pb.h"
-#include "CanvasServer/message.grpc.pb.h"
+#include "message.pb.h"
+#include "message.grpc.pb.h"
 
 #include <functional>
 #include <grpcpp/support/async_stream.h>

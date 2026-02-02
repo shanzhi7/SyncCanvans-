@@ -1,8 +1,14 @@
 #include "canvas.h"
+#include "NewRoomDialog.h"
 #include "ui_canvas.h"
+#include "usermgr.h"
+#include "tcpmgr.h"
+#include "tipwidget.h"
 #include <QMouseEvent>
 #include <QApplication>
-#include "NewRoomDialog.h"
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QByteArray>
 
 Canvas::Canvas(QWidget *parent)
     : QMainWindow(parent)
@@ -15,12 +21,20 @@ Canvas::Canvas(QWidget *parent)
     // 为整个程序安装事件过滤器
     qApp->installEventFilter(this);
 
+    //连接创建房间成功信号
+    //connect(TcpMgr::getInstance().get(),&TcpMgr::sig_creat_room_finish,this,&Canvas::slot_creat_room_finish);
+
 }
 
 Canvas::~Canvas()
 {
     qApp->removeEventFilter(this);  // 移除事件过滤器
     delete ui;
+}
+
+void Canvas::setRoomInfo(std::shared_ptr<RoomInfo> room_info)
+{
+    this->_room_info = room_info;
 }
 
 bool Canvas::eventFilter(QObject *watched, QEvent *event)
@@ -110,27 +124,52 @@ void Canvas::initCanvasUi()
     bar->addPermanentWidget(zoomLabel); // addPermanentWidget 加在最右边
 
     // 右侧：连接状态
-    QLabel *statusDot = new QLabel("● 未连接", this);
+    statusDot = new QLabel("● 未连接", this);
     statusDot->setStyleSheet("color: #ff4d4d; font-size: 12px; padding-right: 10px;"); // 红色圆点
     bar->addPermanentWidget(statusDot);
 }
 
 void Canvas::on_creatRoom_action_triggered()    //新建房间action槽函数
 {
-    NewRoomDialog dlg(this);
-    if(dlg.exec() == QDialog::Accepted) //点击的是创建按钮
-    {
-        QString roomName = dlg.getRoomName();       //获取房间名字
-        QSize canvasSize = dlg.getSelectedSize();   //获取用户选择的画布尺寸
+    // NewRoomDialog dlg(this);
+    // if(dlg.exec() == QDialog::Accepted) //点击的是创建按钮
+    // {
+    //     QString roomName = dlg.getRoomName();       //获取房间名字
+    //     QSize canvasSize = dlg.getSelectedSize();   //获取用户选择的画布尺寸
 
-        //todo... 发送网络请求
+    //     //todo... 发送网络请求
+    //     QJsonObject json_obj;
+    //     json_obj["room_name"] = roomName;                   //房间名
+    //     auto info = UserMgr::getInstance()->getMyInfo();    //房主id
+    //     json_obj["width"] = _paintScene->sceneRect().width();   //画布尺寸
+    //     json_obj["height"] = _paintScene->sceneRect().height();
 
-        //临时测试
-        this->_paintScene->setSceneRect(0,0,canvasSize.width(),canvasSize.height());
+    //     if (info)
+    //     {
+    //         json_obj["owner_uid"] = info->_id;
+    //     } else
+    //     {
+    //         qDebug() << "Error: UserInfo is null!";
+    //         return;
+    //     }
+    //     QJsonDocument jsonDoc(json_obj);
+    //     QByteArray jsonString = jsonDoc.toJson();
+    //     TcpMgr::getInstance()->sig_send_data(ReqId::ID_CREAT_ROOM_REQ,jsonString);      //发送TCP包
 
-        //更新标题栏
-        ui->title_label->setText(roomName + "-房间号：");
-    }
 
+    //     this->_paintScene->setSceneRect(0,0,canvasSize.width(),canvasSize.height());    //设置选择画布大小
+
+    // }
+
+}
+
+void Canvas::slot_creat_room_finish(std::shared_ptr<RoomInfo> room_info)
+{
+    TipWidget::showTip(ui->graphicsView,"创建房间成功");
+    QString room_name = room_info->name;
+    QString room_id = room_info->id;
+    ui->title_label->setText(room_name + "-房间号:" + room_id);
+    statusDot->setText("● 已连接");
+    statusDot->setStyleSheet("color: #2ecc71; font-size: 12px; padding-right: 10px;"); // 绿色圆点
 }
 

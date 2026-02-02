@@ -1,5 +1,7 @@
 #include "CanvasServer/RedisMgr.h"
 #include "CanvasServer/ConfigMgr.h"
+#include <unordered_map>
+#include <iterator>
 
 RedisMgr::RedisMgr()
 {
@@ -184,6 +186,102 @@ bool RedisMgr::HGet(const std::string& key, const std::string& hkey, std::string
     catch (const Error& e)
     {
         std::cerr << "Redis HGet Error: " << e.what() << std::endl;
+        return false;
+    }
+}
+//创建房间信息
+bool RedisMgr::CreateRoom(const std::string& room_id, const RoomInfo& room_info)
+{
+    if (!_redis) return false;
+    try
+    {
+        std::string key = ROOM_PREFIX + room_id;
+
+        // 使用 pipeline 管道技术，减少网络往返，一次性写入
+        auto pipe = _redis->pipeline();
+
+        pipe.hset(key, "name", room_info.name);
+        pipe.hset(key, "owner_uid", std::to_string(room_info.owner_uid));
+        pipe.hset(key, "host", room_info.host);
+        pipe.hset(key, "port", std::to_string(room_info.port));
+        pipe.hset(key, "width", std::to_string(room_info.width));
+        pipe.hset(key, "height", std::to_string(room_info.height));
+
+        // 设置 24 小时过期，防止僵尸房间占用 Redis
+        pipe.expire(key, std::chrono::hours(24));
+
+        pipe.exec(); // 提交执行
+
+        std::cout << "[RedisMgr] Room info saved: " << room_id << std::endl;
+        return true;
+    }
+    catch (const Error& e)
+    {
+        std::cerr << "[RedisMgr] CreateRoom Error: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+bool RedisMgr::GetRoomInfo(const std::string& room_id, RoomInfo& room_info)
+{
+    try
+    {
+        std::string key = ROOM_PREFIX + room_id;
+        std::unordered_map<std::string, std::string> result;    //定义返回结果
+
+        _redis->hgetall(key, std::inserter(result,result.begin()));
+        if (result.empty())
+        {
+            std::cout << "[RedisMgr] GetRoomInfo Error: room not exists" << std::endl;
+            return false;
+        }
+
+        if (result.count("width"))
+        {
+            room_info.width = std::stoi(result["width"]);
+        }
+        if (result.count("height"))
+        {
+            room_info.height = std::stoi(result["height"]);
+        }
+        if (result.count("owner"))
+        {
+            room_info.owner_uid = std::stoi(result["owner"]);
+        }
+        if (result.count("host"))
+        {
+            room_info.host = result["host"];
+        }
+        if (result.count("port"))
+        {
+            room_info.port = std::stoi(result["port"]);
+        }
+        room_info.name = result["name"];
+        return true;
+    }
+    catch (const Error& e)
+    {
+        std::cerr << "[RedisMgr] GetRoomInfo Error: " << e.what() << std::endl;
+        return false;
+    }
+
+}
+
+bool RedisMgr::AddUserToRoom(const std::string& room_id, const std::string& uid)
+{
+    try
+    {
+        // key 建议设计成 "room_users:房间号"
+        std::string key = ROOM_USERS_PREFIX + room_id;
+
+        // SADD 命令：向集合添加元素
+        _redis->sadd(key, uid);
+
+        return true;
+    }
+    catch (const Error& e)
+    {
+        std::cerr << "Redis AddUserToRoom Error: " << e.what() << std::endl;
         return false;
     }
 }

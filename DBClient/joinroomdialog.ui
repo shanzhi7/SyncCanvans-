@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>JoinRoomDialog</class>
+ <widget class="QDialog" name="JoinRoomDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #2b2b2b;</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="title_lbl">
+     <property name="styleSheet">
+      <string notr="true">	border: none;      
+   	color: #C8AA6E;
+	font-size: 40px;
+	font-weight: bold;
+	font-family: 'Microsoft YaHei';</string>
+     </property>
+     <property name="text">
+      <string>加入房间</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="title_en_lbl">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>15</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">	border: none;      
+   	color: #C8AA6E;
+	font-size: 14px;
+	font-weight: bold;
+	font-family: 'Microsoft YaHei';</string>
+     </property>
+     <property name="text">
+      <string>JOIN ROOM</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="roomId_lbl">
+     <property name="styleSheet">
+      <string notr="true">   	color: #C8AA6E;
+	font-size: 14px;
+	font-weight: bold;
+	font-family: 'Microsoft YaHei';</string>
+     </property>
+     <property name="text">
+      <string>房间号 / ROOMID</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="roomId_edit">
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+    background-color: rgba(255, 255, 255, 0.05); /* 极淡的白色透明背景 */
+    border: 1px solid #3d4f68;                   /* 蓝灰色边框 */
+    border-radius: 4px;                          /* 轻微圆角 */
+    padding: 8px 10px;                           /* 内部文字间距 */
+    color: #cccccc;                              /* 输入文字颜色：浅灰 */
+    font-family: &quot;Microsoft YaHei&quot;;
+    font-size: 14px;
+    selection-background-color: #d4b574;         /* 选中文字背景色：金色 */
+}
+
+/* 输入框获得焦点时 */
+QLineEdit:focus {
+    border: 1px solid #d4b574; /* 获得焦点变金色边框 */
+    background-color: rgba(255, 255, 255, 0.08);
+}</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cannel_btn">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    border: 1px solid #1abc9c;  /* 青色边框 */
+    color: #1abc9c;             /* 青色文字 */
+	font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(26, 188, 156, 0.1); /* 悬停微亮 */
+    border: 1px solid #3de3c2;
+	font-weight: bold;
+}
+
+QPushButton:pressed {
+    background-color: rgba(26, 188, 156, 0.2);
+    padding-top: 1px;
+    padding-left: 1px;
+	font-weight: bold;
+}</string>
+       </property>
+       <property name="text">
+        <string>取消</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="join_btn">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+    border: 1px solid #d4b574;  /* 金色边框 */
+    color: #d4b574;             /* 金色文字 */
+	font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: rgba(212, 181, 116, 0.1); /* 悬停时微亮 */
+    border: 1px solid #ead095;
+	font-weight: bold;
+}
+
+QPushButton:pressed {
+    background-color: rgba(212, 181, 116, 0.2); /* 按下效果 */
+    padding-top: 1px; /* 模拟按压位移 */
+    padding-left: 1px;
+	font-weight: bold;
+}</string>
+       </property>
+       <property name="text">
+        <string>确定</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -4,7 +4,20 @@
 #include "CanvasServer/RedisMgr.h"
 #include "CanvasServer/const.h"      // 包含 MSG_IDS 定义
 #include "CanvasServer/message.pb.h"
+#include "CanvasServer/RoomMgr.h"
+#include "CanvasServer/Room.h"
+#include "CanvasServer/ConfigMgr.h"
 #include <iostream>
+#include <random>
+
+// 辅助函数：生成 6 位随机数
+std::string GenRandomId()
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(100000, 999999);
+    return std::to_string(dis(gen));
+}
 
 LogicSystem::LogicSystem() : _b_stop(false)
 {
@@ -80,6 +93,14 @@ void LogicSystem::RegisterCallBacks()
     _fun_callbacks[ID_JOIN_ROOM_REQ] = std::bind(&LogicSystem::HandleJoinRoom, this,
         std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
+    //注册创建房间
+    _fun_callbacks[ID_CREAT_ROOM_REQ] = std::bind(&LogicSystem::HandleCreatRoom, this,
+        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+
+    //注册加入房间
+    _fun_callbacks[ID_JOIN_ROOM_REQ] = std::bind(&LogicSystem::HandleJoinRoom, this,
+        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+
     //不需要注册 ID_DRAW_REQ (画画请求)
     // 画画请求在 CSession 层直接被拦截转发了，不会进这个队列
 }
@@ -105,91 +126,262 @@ void LogicSystem::HandleLogin(std::shared_ptr<CSession> session, const short& ms
         });
 
 
-    if (!reader.parse(msg_data, root))
-    {
-        // 解析失败，直接 return
-        // 此时会触发 Defer，发送 Error_Json 给客户端
-        std::cout << "[CanvasServer] Login parse json failed." << std::endl;
-        return;
-    }
-    if (!root.isMember("uid") || !root.isMember("token"))   //检测字段是否存在
-    {
-        rsp["error"] = message::ErrorCodes::Error_Json;
-        std::cout << "[CanvasServer] Login Error: Missing field." << std::endl;
-        return;
-    }
+        if (!reader.parse(msg_data, root))
+        {
+            // 解析失败，直接 return
+            // 此时会触发 Defer，发送 Error_Json 给客户端
+            std::cout << "[CanvasServer] Login parse json failed." << std::endl;
+            return;
+        }
+        if (!root.isMember("uid") || !root.isMember("token"))   //检测字段是否存在
+        {
+            rsp["error"] = message::ErrorCodes::Error_Json;
+            std::cout << "[CanvasServer] Login Error: Missing field." << std::endl;
+            return;
+        }
 
-    int client_uid = root["uid"].asInt();
-    std::string client_token = root["token"].asString();
+        int client_uid = root["uid"].asInt();
+        std::string client_token = root["token"].asString();
 
-    //构造redis key
-    std::string token_key = TOKEN_PREFIX + client_token;
+        //构造redis key
+        std::string token_key = TOKEN_PREFIX + client_token;
 
-    //查找redis，有没有该token对应的uid
-    std::string valid_uid_str;
-    bool b_exist = RedisMgr::getInstance()->Get(token_key, valid_uid_str);
+        //查找redis，有没有该token对应的uid
+        std::string valid_uid_str;
+        bool b_exist = RedisMgr::getInstance()->Get(token_key, valid_uid_str);
 
-    //token过期或者错误
-    if (!b_exist)
-    {
-        rsp["error"] = message::ErrorCodes::TokenInvalid;
-        std::cout << "[CanvasServer] Token not found in Redis. Client UID: " << client_uid << std::endl;
-        return; //触发Defer发送 TokenInvalid
-    }
+        //token过期或者错误
+        if (!b_exist)
+        {
+            rsp["error"] = message::ErrorCodes::TokenInvalid;
+            std::cout << "[CanvasServer] Token not found in Redis. Client UID: " << client_uid << std::endl;
+            return; //触发Defer发送 TokenInvalid
+        }
 
-    //token存在，但是uid是别人的
-    if (std::stoi(valid_uid_str) != client_uid)
-    {
-        rsp["error"] = message::ErrorCodes::TokenInvalid;
-        std::cout << "[CanvasServer] Token mismatch! Redis UID: " << valid_uid_str << " Client UID: " << client_uid << std::endl;
-        return; // 触发 Defer 发送 TokenInvalid
-    }
+        //token存在，但是uid是别人的
+        if (std::stoi(valid_uid_str) != client_uid)
+        {
+            rsp["error"] = message::ErrorCodes::TokenInvalid;
+            std::cout << "[CanvasServer] Token mismatch! Redis UID: " << valid_uid_str << " Client UID: " << client_uid << std::endl;
+            return; // 触发 Defer 发送 TokenInvalid
+        }
 
-    // 校验成功！
-    session->SetUserId(client_uid);     //绑定UID到Session
+        // 校验成功！
+        session->SetUserId(client_uid);     //绑定UID到Session
 
-    SessionMgr::getInstance()->AddSession(client_uid,session);  //注册到全局管理器(SessionMgr)
+        SessionMgr::getInstance()->AddSession(client_uid, session);  //注册到全局管理器(SessionMgr)
 
-    // 构造成功回包
-    rsp["error"] = message::ErrorCodes::SUCCESS;
-    rsp["uid"] = client_uid;
+        // 构造成功回包
+        rsp["error"] = message::ErrorCodes::SUCCESS;
+        rsp["uid"] = client_uid;
 
-    std::cout << "[CanvasServer] User Login Success: " << client_uid << std::endl;
+        std::cout << "[CanvasServer] User Login Success: " << client_uid << std::endl;
 
-    // 函数结束，Defer 自动析构，发送 SUCCESS 包
+        // 函数结束，Defer 自动析构，发送 SUCCESS 包
 }
 
-void LogicSystem::HandleJoinRoom(std::shared_ptr<CSession> session, const short& msg_id, const std::string& msg_data)
+void LogicSystem::HandleCreatRoom(std::shared_ptr<CSession> session, const short& msg_id, const std::string& msg_data)
 {
     Json::Reader reader;
     Json::Value root;
     Json::Value rsp;
 
-    //todo...
+    rsp["error"] = message::ErrorCodes::Error_Json;
+    Defer defer([this, session, &rsp]() {
+        std::string return_str = rsp.toStyledString();
+        session->Send(return_str, ID_CREAT_ROOM_RSP);
+        });
 
-    //reader.parse(msg_data, root);
-    //std::string room_id = root["room_id"].asString();
-    //int uid = session->GetUserId();
+    if (!reader.parse(msg_data, root))  //解析失败
+    {
+        std::cout << "[CanvasServer] Login parse json failed." << std::endl;
+        return;
+    }
 
-    //// 1. 获取或创建房间
-    //// RoomMgr 是单例，管理所有 Room
-    //auto room = RoomMgr::GetInstance()->GetOrCreateRoom(room_id);
+    // 提取参数
+    if (!root.isMember("room_name") || !root.isMember("owner_uid"))
+    {
+        std::cout << "[CanvasServer] Missing fields in CreateRoom." << std::endl;
+        return;
+    }
 
-    //if (!room) {
-    //    rsp["error"] = 1; // Failed
-    //    session->Send(rsp.toStyledString(), ID_JOIN_ROOM_RSP);
-    //    return;
-    //}
+    std::string room_name = root["room_name"].asString();
+    int owner_uid = root["owner_uid"].asInt();
 
-    //// 2. 将 Session 加入房间
-    //// Join 内部会广播 "User XXX Joined" 给房间其他人
-    //// 并且会把历史笔迹发给当前 session
-    //room->Join(session);
+    //生成唯一的RoomId (防碰撞逻辑)
+    std::string room_id;
+    int retry_count = 0;    // 重试次数
+    bool is_unique = false;
 
-    //// 3. 回复客户端：加入成功
-    //rsp["error"] = 0;
-    //rsp["room_id"] = room_id;
-    //session->Send(rsp.toStyledString(), ID_JOIN_ROOM_RSP);
+    //最多尝试5次，防止redis 挂掉
+    while (retry_count < 5)
+    {
+        room_id = GenRandomId();
+        std::string room_id_key = ROOM_PREFIX + room_id;
+        // 检查room_id是否已经存在
+        if (!RedisMgr::getInstance()->ExistsKey(room_id_key))
+        {
+            is_unique = true;
+            break;
+        }
+        retry_count++;
+    }
 
-    //std::cout << "User " << uid << " joined room " << room_id << std::endl;
+    if (!is_unique)
+    {
+        rsp["error"] = message::ErrorCodes::RoomCreateFailed; // 生成 ID 失败
+        std::cout << "[LogicSystem] Failed to generate unique Room ID after retries." << std::endl;
+        return;
+    }
+
+    //内存创建房间
+    auto room = RoomMgr::getInstance()->GetOrCreateRoom(room_id);
+    if (!room)
+    {
+        rsp["error"] = message::ErrorCodes::RoomCreateFailed;
+        return;
+    }
+    room->SetRoomInfo(room_name, owner_uid);
+
+    //Redis注册房间
+    auto& cfg = ConfigMgr::Inst();
+    std::string self_host = cfg["SelfServer"]["Host"];
+    if (self_host == "0.0.0.0")
+    {
+        self_host = "127.0.0.1";        //修改...
+    }
+    int self_port = std::stoi(cfg["SelfServer"]["Port"]);
+
+    RoomInfo room_info;
+    room_info.id = room_id;
+    room_info.name = room_name;
+    room_info.owner_uid = owner_uid;
+    room_info.host = self_host;
+    room_info.port = self_port;
+    room_info.width = root["width"].asInt();
+    room_info.height = root["height"].asInt();
+
+    //写入redis
+    bool b_redis = RedisMgr::getInstance()->CreateRoom(room_id, room_info); //CreateRoom 内部使用了 pipeline 和 expire
+    if (!b_redis)
+    {
+        rsp["error"] = message::ErrorCodes::RoomCreateFailed;
+        std::cout << "[LogicSystem] Failed to register room in Redis." << std::endl;
+        return;
+    }
+
+    //成功返回
+    rsp["error"] = message::ErrorCodes::SUCCESS;
+    rsp["room_id"] = room_id;
+    rsp["room_name"] = room_name;
+    rsp["room_host"] = self_host;
+    rsp["room_port"] = self_port;
+    rsp["owner_uid"] = owner_uid;
+    rsp["width"] = room_info.width;
+    rsp["height"] = room_info.height;
+
+    std::cout << "[CanvasServer] Create Room Success! ID: " << room_id
+        << " Name: " << room_name
+        << " Owner: " << owner_uid << std::endl;
+}
+
+void LogicSystem::HandleJoinRoom(std::shared_ptr<CSession> session, const short& msg_id, const std::string& msg_data)
+{
+    //解析请求包
+    message::JoinRoomReq req;
+    message::JoinRoomRsp rsp;
+    rsp.set_error(message::ErrorCodes::Error_Json); //默认错误，解析失败
+
+    Defer defer([session, &rsp]() {                 //回包
+        std::string sendData;
+        if (rsp.SerializeToString(&sendData))
+        {
+            session->Send(sendData,ID_JOIN_ROOM_RSP);
+        }
+        else
+        {
+            std::cerr << "[HandleJoinRoom]: Serialize JoinRoomRsp failed!" << std::endl;
+        }
+    });
+    if (!req.ParseFromString(msg_data))
+    {
+        std::cerr << "[HandleJoinRoom]: Parse error" << std::endl;
+        return;
+    }
+
+    std::string uid = std::to_string(req.uid());    //加入者id
+    std::string room_id = req.room_id();
+    std::cout << "Recv JoinRoomReq: User[" << uid << "] -> Room[" << room_id << "]" << std::endl;
+
+    //查redis
+    RoomInfo room_info;
+    bool b_redis = RedisMgr::getInstance()->GetRoomInfo(room_id, room_info);
+
+    //房间不存在
+    if (!b_redis)
+    {
+        rsp.set_error(message::ErrorCodes::RoomNotExist);
+        return;
+    }
+
+    //读取本机地址并且比较
+    std::string self_host = ConfigMgr::Inst()["SelfServer"]["Host"];
+    std::string self_port = ConfigMgr::Inst()["SelfServer"]["Port"];
+    if (self_host == "0.0.0.0")
+    {
+        self_host = "127.0.0.1";
+    }
+    if (room_info.host != self_host || std::to_string(room_info.port) != self_port)
+    {
+        std::cout << "[HandleJoinRoom]:Redirect: Target is [" << room_info.host << ":" << room_info.port
+            << "] Self is [" << self_host << ":" << self_host << "]" << std::endl;
+
+        rsp.set_error(message::ErrorCodes::NeedRedirect);   //设置重定向错误
+
+        //将必要的重定向数据发给客户端
+        rsp.set_redirect_host(room_info.host);
+        rsp.set_redirect_port(room_info.port);
+        rsp.set_room_id(room_id);
+        return;
+    }
+
+    //正常加入，房主跟加入者在本机
+    bool addSuccess = RedisMgr::getInstance()->AddUserToRoom(room_id, uid);
+    if (!addSuccess)
+    {
+        rsp.set_error(message::ErrorCodes::RoomJoinFailed);
+        return;
+    }
+    auto room = RoomMgr::getInstance()->GetRoom(room_id);               //获取房间
+    if (!room)      //房间不存在RoomMgr
+    {
+        std::cerr << "[HandleJoinRoom] Critical: Room exists in Redis but failed to load in Memory!" << std::endl;
+        rsp.set_error(message::ErrorCodes::ServerInternalErr);
+        return;
+    }
+    auto user_session = SessionMgr::getInstance()->GetSession(std::stoi(uid));
+    if (user_session)
+    {
+        room->Join(user_session);       //内存中加入房间
+    }
+    else
+    {
+        // 极端情况：处理请求时 Session 断了
+        std::cerr << "[HandleJoinRoom] User session not found" << std::endl;
+        rsp.set_error(message::ErrorCodes::LoginErr);
+        return;
+    }
+
+
+    //回包
+    rsp.set_error(message::ErrorCodes::SUCCESS);
+    rsp.set_room_name(room_info.name);
+    rsp.set_owner_uid(room_info.owner_uid);
+    rsp.set_canvas_width(room_info.width);
+    rsp.set_canvas_height(room_info.height);
+    rsp.set_room_id(room_id);
+    rsp.set_redirect_host(room_info.host);
+    rsp.set_redirect_port(room_info.port);
+
+    std::cout << "Join Success! User[" << uid << "] entered Room[" << room_id << "]" << std::endl;
 }

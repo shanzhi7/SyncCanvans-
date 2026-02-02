@@ -3,7 +3,7 @@
 // source: message.proto
 // Protobuf C++ Version: 5.29.5
 
-#include "CanvasServer/message.pb.h"
+#include "message.pb.h"
 
 #include <algorithm>
 #include <type_traits>

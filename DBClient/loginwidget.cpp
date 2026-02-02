@@ -40,7 +40,7 @@ LoginWidget::LoginWidget(QWidget *parent)
     connect(TcpMgr::getInstance().get(),&TcpMgr::sig_con_success,this,&LoginWidget::slot_tcp_con_finish);
 
     //tcp登录成功，连接发送切换canvas信号
-    connect(TcpMgr::getInstance().get(),&TcpMgr::sig_switch_canvas,this,&LoginWidget::switchCanvas);
+    connect(TcpMgr::getInstance().get(),&TcpMgr::sig_switch_canvas,this,&LoginWidget::switchLobby);
 }
 
 LoginWidget::~LoginWidget()

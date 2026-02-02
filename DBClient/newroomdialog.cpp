@@ -62,11 +62,12 @@ void NewRoomDialog::paintEvent(QPaintEvent *event)
     QColor fixedColor = background.darker(150);
     painter.fillRect(this->rect(),fixedColor);
 
-    // 开启抗锯齿，圆形边缘更平滑 (稍吃性能)
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    //去除边框
+    painter.setRenderHint(QPainter::Antialiasing); // 抗锯齿对圆角很重要
     painter.setPen(Qt::NoPen);
+    painter.setBrush(fixedColor); // 设置画刷颜色
+
+    // 【优化】绘制圆角矩形背景 (圆角半径 20)
+    painter.drawRoundedRect(this->rect(), 20, 20);
 
     //绘制气泡
     for(const auto& bubble : bubbles)

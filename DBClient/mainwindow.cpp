@@ -48,6 +48,12 @@ MainWindow::MainWindow(QWidget *parent)
     reset_widget->hide();
     //初始化重置密码窗口 end
 
+    //初始化大厅窗口 begin
+    lobby_widget = new LobbyWidget(this);
+    lobby_widget->setAttribute(Qt::WA_TranslucentBackground);       //设置透明背景
+    lobby_widget->hide();
+    //初始化大厅窗口 end
+
     // 初始化画布窗口
     canvas = new Canvas();
     canvas->setAttribute(Qt::WA_DeleteOnClose);     //关闭自动释放
@@ -70,10 +76,13 @@ MainWindow::MainWindow(QWidget *parent)
     //连接登录界面点击切换重置密码页面
     connect(login_widget,&LoginWidget::switchReset,this,&MainWindow::slotSwitchResetFromLogin);
 
-    //连接登录成功切换Canvas页面
-    connect(login_widget,&LoginWidget::switchCanvas,this,&MainWindow::slotSwitchCanvas);
+    //连接登录成功切换 lobby页面
+    connect(login_widget,&LoginWidget::switchLobby,this,&MainWindow::slotSwitchLobby);
 
-    emit login_widget->switchCanvas();      //测试
+    //lobby 切换 canvas页面
+    connect(lobby_widget,&LobbyWidget::sig_switchCanvas,this,&MainWindow::slotSwitchCanvas);
+
+    //emit login_widget->switchCanvas();      //测试
 }
 
 MainWindow::~MainWindow()
@@ -246,8 +255,24 @@ void MainWindow::slotSwitchResetFromLogin()
     reset_widget->show();
 }
 
-void MainWindow::slotSwitchCanvas()
+void MainWindow::slotSwitchLobby()
 {
+    // 取出当前中央部件（login_widget）并保存，不销毁
+    login_widget = qobject_cast<LoginWidget*>(takeCentralWidget());
+    if (login_widget)
+    {
+        login_widget->hide(); // 隐藏注册窗口
+    }
+    // 设置大厅窗口为新的中央部件
+    setCentralWidget(lobby_widget);
+    this->setFixedSize(lobby_widget->size());
+    lobby_widget->show();
+}
+
+void MainWindow::slotSwitchCanvas(std::shared_ptr<RoomInfo> room_info)  //切换画布页面
+{
+    canvas->setRoomInfo(room_info);
+    canvas->slot_creat_room_finish(room_info);
     canvas->show();
     this->hide();
 }

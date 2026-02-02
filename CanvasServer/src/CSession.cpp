@@ -166,7 +166,7 @@ void CSession::ReadBody(short msg_id, short msg_len)
 			// 核心分流逻辑：快慢分离
 			// 
 			// A. 快通道：高频绘画数据，不进 LogicQueue，直接广播
-			if (msg_id == ID_DRAW_REQ)
+			if (msg_id == ID_DRAW_REQ_DEL)
 			{
 				// 如果加入了房间，直接广播
 				if (auto room = _room.lock())

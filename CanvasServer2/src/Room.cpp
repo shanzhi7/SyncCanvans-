@@ -64,7 +64,7 @@ void Room::Broadcast(const std::string& data, int msg_id, int exclude_uid)
     std::lock_guard<std::mutex> lock(_mutex);
 
     // 如果是画画请求，存入历史记录
-    if (msg_id == ID_DRAW_REQ)
+    if (msg_id == ID_DRAW_REQ_DEL)
     {
         _history.push_back(data);
     }
@@ -81,4 +81,21 @@ void Room::Broadcast(const std::string& data, int msg_id, int exclude_uid)
         // 发送
         target_session->Send(data, msg_id);
     }
+}
+
+//获取房间ID
+std::string Room::GetRoomId() const
+{
+    return _room_id;
+}
+
+void Room::SetRoomInfo(const std::string& name, int owner_uid)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    _name = name;
+    _owner_uid = owner_uid;
+}
+int Room::GetOwnerUid() const //获取房主ID
+{
+    return _owner_uid;
 }
