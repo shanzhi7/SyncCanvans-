@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //初始化大厅窗口 begin
     lobby_widget = new LobbyWidget(this);
-    lobby_widget->setAttribute(Qt::WA_TranslucentBackground);       //设置透明背景
+    //lobby_widget->setAttribute(Qt::WA_TranslucentBackground);       //设置透明背景
     lobby_widget->hide();
     //初始化大厅窗口 end
 
@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(lobby_widget,&LobbyWidget::sig_switchCanvas,this,&MainWindow::slotSwitchCanvas);
 
     //emit login_widget->switchCanvas();      //测试
+    //emit login_widget->switchLobby();                       //测试
 }
 
 MainWindow::~MainWindow()

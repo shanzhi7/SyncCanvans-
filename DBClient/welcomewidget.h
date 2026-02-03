@@ -18,6 +18,8 @@ public:
 private:
     Ui::WelcomeWidget *ui;
 
+    void initIcons();
+
 signals:
     void switchLogin();         //切换登录窗口信号
 };

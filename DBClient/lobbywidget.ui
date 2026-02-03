@@ -6,127 +6,317 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>900</width>
     <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <property name="styleSheet">
+   <string notr="true">/* ================== 全局基础设置 ================== */
+QWidget {
+    font-family: 'Microsoft YaHei';
+	background-color: transparent;
+}
+/* 只给大厅的主背景上色 */
+QWidget#LobbyWidget { 
+   background-color: rgba(30, 30, 30, 220);
+}
+
+/* ================== 顶部：画板大厅标题 ================== */
+/* 中文标题：纯白，醒目 */
+QLabel#draw_label {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: bold;
+    border: none;
+}
+
+/* 英文副标：深灰，低调 */
+QLabel#draw_label_en {
+    color: #666666;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px; /* 字间距拉开，更有设计感 */
+    border: none;
+}
+
+/* ================== 中间核心卡片区 ================== */
+/* 中文标题 (创建/加入)
+   这里使用了科技蓝 (#4ea5f9)，这是“功能色”，暗示这里是可以点击操作的
+   这与欢迎页的金色彻底区分开
+*/
+QLabel#create_lbl1, QLabel#join_lbl1 {
+    color: #4ea5f9; 
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+}
+
+/* 英文标题 (CREATE ROOM / JOIN ROOM) */
+QLabel#create_lbl2, QLabel#join_lbl2 {
+    color: #526072; /* 蓝灰色 */
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+}
+
+/* 描述文字 (从零开始... / 输入ID...) */
+QLabel#create_lbl3, QLabel#join_lbl3 {
+    color: #999999; /* 浅灰色，比背景略亮 */
+    font-size: 16px;
+    border: none;
+    margin-top: 5px;
+}
+
+/* 卡片交互感 (HoverWidget)
+   既然你的父容器叫 create_widget 和 join_widget
+   我们可以给整个卡片加一个背景色变化，鼠标放上去变亮
+*/
+QWidget#create_widget, QWidget#join_widget {
+    /* 卡片平时是全透明的，或者只有很淡的白色 */
+    background-color: rgba(255, 255, 255, 10); 
+    border: 1px solid rgba(255, 255, 255, 30);
+    border-radius: 12px;
+}
+/* 鼠标放上去时，卡片变亮 */
+QWidget#create_widget:hover, QWidget#join_widget:hover {
+    background-color: rgba(255, 255, 255, 30); /* 变亮 */
+    border: 1px solid #4ea5f9; /* 亮蓝色边框 */
+}
+
+
+/* ================== 右侧：历史记录列表 ================== */
+/* 标题：最近加入 */
+QLabel#history_lbl {
+    color: #aaaaaa;
+    font-size: 14px;
+    font-weight: bold;
+    padding-left: 2px;
+    border: none;
+}
+
+/* 列表控件本身 */
+QListWidget#history_list {
+    background-color: rgba(0, 0, 0, 80); /* 比大背景更黑一点，形成深邃感 */
+    border-radius: 6px;
+	border: 1px solid rgba(255, 255, 255, 20); /* 微微的白边，增加精致感 */
+}
+
+/* 列表里的每一项 */
+QListWidget#history_list::item {
+    height: 40px;
+    color: #cccccc;
+    padding-left: 10px;
+    border-bottom: 1px solid #2d2d2d; /* 每一行加个极淡的分隔线 */
+}
+
+/* 鼠标悬停在列表项上 */
+QListWidget#history_list::item:hover {
+    background-color: #3a3a3d;
+    color: #ffffff;
+}
+
+/* 选中列表项 */
+QListWidget#history_list::item:selected {
+    background-color: #0e639c; /* 选中变为深蓝色 */
+    color: #ffffff;
+    border-left: 3px solid #ffffff; /* 左侧加个亮条 */
+}
+
+/* ================== 左侧：用户侧边栏 ================== */
+/* 用户昵称 */
+QLabel#name_lbl {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+}
+
+/* 退出账号按钮 (pushButton) - 幽灵按钮风格 */
+QPushButton#pushButton {
+    background-color: transparent;
+    border: 1px solid #555555;
+    color: #aaaaaa;
+    border-radius: 4px;
+    padding: 6px;
+}
+
+QPushButton#pushButton:hover {
+    border-color: #ff4d4d; /* 悬停变红，暗示危险操作/退出 */
+    color: #ff4d4d;
+}
+
+QPushButton#pushButton:pressed {
+    background-color: rgba(255, 77, 77, 0.1);
+}</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="QLabel" name="draw_label">
+        <widget class="QLabel" name="avator_lbl">
          <property name="minimumSize">
           <size>
-           <width>200</width>
-           <height>0</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>200</width>
-           <height>16777215</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">	border: none;      
-   	color: #C8AA6E;
-	font-size: 40px;
-	font-weight: bold;
-	font-family: 'Microsoft YaHei';</string>
+          <string notr="true"/>
          </property>
          <property name="text">
-          <string>画板大厅</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <string/>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="draw_label_en">
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">	border: none;      
-   	color: #C8AA6E;
-	font-size: 12px;
-	font-weight: bold;
-	font-family: 'Microsoft YaHei';</string>
-         </property>
+        <widget class="QLabel" name="name_lbl">
          <property name="text">
-          <string>WHITEBOARD LOBBY</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignHCenter|Qt::AlignTop</set>
+          <string>MyName</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="verticalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>20</width>
+         <height>40</height>
         </size>
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>退出账号</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="topMargin">
-      <number>10</number>
-     </property>
+    <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="HoverWidget" name="create_widget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>300</width>
-         <height>300</height>
-        </size>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="draw_label">
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>画板大厅</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="draw_label_en">
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>WHITEBOARD LOBBY</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="topMargin">
+        <number>10</number>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>300</width>
-         <height>300</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">HoverWidget[state=&quot;normal&quot;]{
+       <item>
+        <widget class="HoverWidget" name="create_widget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>300</width>
+           <height>300</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>300</width>
+           <height>300</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">HoverWidget[state=&quot;normal&quot;]{
 	border: 2px solid #4A5A75;      
 	background-color: rgba(28, 34, 40, 200);
 	font-family: 'Microsoft YaHei';
@@ -139,43 +329,71 @@ HoverWidget[state=&quot;hover&quot;]{
 	font-family: 'Microsoft YaHei';
 	border-radius: 5px;
 }</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="create_head_lbl">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>100</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>100</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 0px solid transparent; /* 显式声明一下 */
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="create_head_lbl">
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 0px solid transparent; /* 显式声明一下 */
 border-image: url(:/res/offline.png);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="create_lbl1">
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
             <property name="text">
-             <string/>
+             <string>创建房间</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -183,88 +401,50 @@ border-image: url(:/res/offline.png);</string>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+           <widget class="QLabel" name="create_lbl2">
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
+            <property name="text">
+             <string>CREATE ROOM</string>
             </property>
-           </spacer>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="create_lbl3">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>从零开始，捕捉你的灵感</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QLabel" name="create_lbl1">
-          <property name="styleSheet">
-           <string notr="true">	border: none;      
-   	color: #F0E6D2;
-	font-size: 20px;
-	font-weight: bold;
-	font-family: 'Microsoft YaHei';</string>
-          </property>
-          <property name="text">
-           <string>创建房间</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="create_lbl2">
-          <property name="styleSheet">
-           <string notr="true">	border: none;      
-   	color: #526072;
-	font-size: 15px;
-	font-family: 'Microsoft YaHei';</string>
-          </property>
-          <property name="text">
-           <string>CREATE ROOM</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="create_lbl3">
-          <property name="styleSheet">
-           <string notr="true">	border: none;      
-   	color: #A09B8C;
-	font-size: 18px;
-	font-family: 'Microsoft YaHei';</string>
-          </property>
-          <property name="text">
-           <string>从零开始，捕捉你的灵感</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="HoverWidget" name="join_widget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>300</width>
-         <height>300</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>300</width>
-         <height>300</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">HoverWidget[state=&quot;normal&quot;]{
+        </widget>
+       </item>
+       <item>
+        <widget class="HoverWidget" name="join_widget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>300</width>
+           <height>300</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>300</width>
+           <height>300</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">HoverWidget[state=&quot;normal&quot;]{
 	border: 2px solid #4A5A75;      
 	background-color: rgba(28, 34, 40, 200);
 	font-family: 'Microsoft YaHei';
@@ -277,42 +457,70 @@ HoverWidget[state=&quot;hover&quot;]{
 	font-family: 'Microsoft YaHei';
 	border-radius: 5px;
 }</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="join_head_lbl">
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border-image: url(:/res/shared.png);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QLabel" name="join_head_lbl">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>100</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>100</height>
-             </size>
-            </property>
+           <widget class="QLabel" name="join_lbl1">
             <property name="styleSheet">
-             <string notr="true">border-image: url(:/res/shared.png);</string>
+             <string notr="true"/>
             </property>
             <property name="text">
-             <string/>
+             <string>加入房间</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -320,89 +528,64 @@ HoverWidget[state=&quot;hover&quot;]{
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+           <widget class="QLabel" name="join_lbl2">
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
+            <property name="text">
+             <string>JOIN ROOM</string>
             </property>
-           </spacer>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="join_lbl3">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>输入ID，与好友共同挥洒</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QLabel" name="join_lbl1">
-          <property name="styleSheet">
-           <string notr="true">	border: none;      
-   	color: #F0E6D2;
-	font-size: 20px;
-	font-weight: bold;
-	font-family: 'Microsoft YaHei';</string>
-          </property>
-          <property name="text">
-           <string>加入房间</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="join_lbl2">
-          <property name="styleSheet">
-           <string notr="true">	border: none;      
-   	color: #526072;
-	font-size: 15px;
-	font-family: 'Microsoft YaHei';</string>
-          </property>
-          <property name="text">
-           <string>JOIN ROOM</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="join_lbl3">
-          <property name="styleSheet">
-           <string notr="true">	border: none;      
-   	color: #A09B8C;
-	font-size: 18px;
-	font-family: 'Microsoft YaHei';</string>
-          </property>
-          <property name="text">
-           <string>输入ID，与好友共同挥洒</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
+    <layout class="QVBoxLayout" name="verticalLayout_6">
+     <item>
+      <widget class="QLabel" name="history_lbl">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>最近加入</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="history_list">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

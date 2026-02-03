@@ -16,8 +16,13 @@ public:
     explicit LobbyWidget(QWidget *parent = nullptr);
     ~LobbyWidget();
 
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
 private:
     Ui::LobbyWidget *ui;
+
+    void initIcons();
 
 signals:
     void sig_switchCanvas(std::shared_ptr<RoomInfo> room_info);             //发送切换画布页面
