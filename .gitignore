@@ -77,3 +77,6 @@ VerifyServer/.VSCodeCounter/
 
 # --- 敏感配置文件 ---
 config.ini
+
+# --- 【例外】Qt客户端的配置不需要保密，强制追踪 ---
+!QtClient/config.ini

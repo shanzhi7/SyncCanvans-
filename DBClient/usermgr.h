@@ -12,23 +12,31 @@
 
 #include "userdata.h"
 #include "singleton.h"
+#include <QLabel>
 #include <memory>
-class UserMgr : public Singleton<UserMgr>,public std::enable_shared_from_this<UserMgr>
+#include <QObject>
+#include <QNetworkAccessManager>
+class UserMgr : public QObject, public Singleton<UserMgr>, public std::enable_shared_from_this<UserMgr>
 {
+    Q_OBJECT
 public:
     UserMgr();
 
-    std::shared_ptr<UserInfo> getMyInfo();
+    std::shared_ptr<const UserInfo> getMyInfo();
     QString getToken();
     int getUid();
+    QString getAvatar();
 
     void setToken(QString& token);
     void setMyInfo(std::shared_ptr<UserInfo> userInfo);
     void setAvatar(QString avatar);
 
+    void loadAvatar(const QString& url,QLabel* label);      //从OSS或本地加载头像
+
 private:
     std::shared_ptr<UserInfo> _my_info;         //当前客户端用户信息
     QString token;
+    QNetworkAccessManager* _netMgr;             //Qhttp管理类
 };
 
 #endif // USERMGR_H

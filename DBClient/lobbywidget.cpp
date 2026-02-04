@@ -34,6 +34,9 @@ LobbyWidget::LobbyWidget(QWidget *parent)
     //连接http请求完成信号
     connect(HttpMgr::getInstance().get(),&HttpMgr::sig_lobby_mod_finish,this,&LobbyWidget::slot_lobby_mod_finish);
 
+    //登录成功，加载用户信息
+    connect(TcpMgr::getInstance().get(),&TcpMgr::sig_switch_canvas,this,&LobbyWidget::slot_load_info);
+
     initIcons();            //初始化图标
     initHandles_map();      //初始化回包处理函数
 
@@ -220,6 +223,17 @@ void LobbyWidget::slot_create_room_finish(std::shared_ptr<RoomInfo> room_info)
 void LobbyWidget::slot_join_room_finish(std::shared_ptr<RoomInfo> room_info)
 {
     emit sig_switchCanvas(room_info);
+}
+
+void LobbyWidget::slot_load_info()
+{
+
+    //更新头像
+    std::shared_ptr<const UserInfo> user_info = UserMgr::getInstance()->getMyInfo();
+    UserMgr::getInstance()->loadAvatar(user_info->_avatar,ui->avator_lbl);      //将url和label传入
+
+    //更新用户名
+    ui->name_lbl->setText(user_info->_name);
 }
 
 void LobbyWidget::on_upload_btn_clicked()

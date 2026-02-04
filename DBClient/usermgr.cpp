@@ -1,9 +1,13 @@
 #include "usermgr.h"
+#include <QCoreApplication>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QDir>
 
 UserMgr::UserMgr()
     :token(""),_my_info(nullptr)
 {
-
+    _netMgr = new QNetworkAccessManager(this);  //初始化http管理对象
 }
 
 QString UserMgr::getToken()
@@ -15,6 +19,7 @@ int UserMgr::getUid()
 {
     return this->_my_info->_id;
 }
+
 
 void UserMgr::setToken(QString &token)
 {
@@ -31,7 +36,71 @@ void UserMgr::setAvatar(QString avatar)
     this->_my_info->_avatar = avatar;
 }
 
-std::shared_ptr<UserInfo> UserMgr::getMyInfo()
+void UserMgr::loadAvatar(const QString &url, QLabel *label)
+{
+    if(url.isEmpty() || label == nullptr)
+    {
+        qDebug()<<"url或label为空";
+        return;
+    }
+    QString fileName = url.section('/',-1);     //获取文件名字
+
+    //本地缓存目录，路径拼接 (使用 Qt 推荐的拼接方式，跨平台)
+    QString appPath = QCoreApplication::applicationDirPath();
+    QString cacheDirPath = appPath + QDir::separator() + "avatar_cache";
+
+    // QDir::cleanPath 会把路径里的 "//" 或 "\/" 整理干净
+    QString localPath = QDir::cleanPath(cacheDirPath + QDir::separator() + fileName);
+
+    QDir dir(cacheDirPath);
+    if(!dir.exists())   //不存在，创建目录
+    {
+        dir.mkpath(".");
+    }
+
+    if(QFile::exists(localPath)) //如果本地已经有这个文件了
+    {
+        QPixmap pix(localPath);
+        label->setPixmap(pix.scaled(label->size(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+        qDebug()<<"加载头像(命中缓存)";
+        return;
+    }
+
+    //本地没有，发起网络请求下载
+    qDebug() << "本地无缓存，开始下载头像:" << url;
+    QNetworkRequest request(url);
+    QNetworkReply* reply = _netMgr->get(request);
+
+    //异步等待下载结束
+    connect(reply, &QNetworkReply::finished, [=]() {
+        if (reply->error() == QNetworkReply::NoError)
+        {
+            QByteArray data = reply->readAll();
+
+            // 显示图片
+            QPixmap pix;
+            if (pix.loadFromData(data))
+            {
+                label->setPixmap(pix.scaled(label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+                // 保存到本地缓存，下次就不用下载了
+                QFile file(localPath);
+                if (file.open(QIODevice::WriteOnly))
+                {
+                    file.write(data);
+                    file.close();
+                }
+            }
+        }
+        else
+        {
+            qDebug() << "头像下载失败:" << reply->errorString();
+        }
+        reply->deleteLater();
+    });
+}
+
+std::shared_ptr<const UserInfo> UserMgr::getMyInfo()
 {
     return this->_my_info;
 }

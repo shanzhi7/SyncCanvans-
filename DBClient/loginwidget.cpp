@@ -191,7 +191,7 @@ void LoginWidget::initHandlerMap()
         auto email = jsonObj["email"].toString();
         auto uid = jsonObj["uid"].toInt();
         auto name = jsonObj["name"].toString();
-        auto avator = jsonObj["avator"].toString();
+        auto avator = jsonObj["avatar"].toString();
         auto host = jsonObj["host"].toString();
         auto port = jsonObj["port"].toString();
 
@@ -200,7 +200,7 @@ void LoginWidget::initHandlerMap()
 
         QString fromServer = jsonObj["server"].toString();
         qDebug()<<"email is "<<email<<"  from server: "<<fromServer<<"reqid is "<<"user login";
-        qDebug()<<"uid is "<<uid<<" name is "<<name<<"avator is "<<avator<<"host is "<<host<<"port is "<<port;
+        qDebug()<<"uid is "<<uid<<" name is "<<name<<"avatar is "<<avator<<"host is "<<host<<"port is "<<port;
 
         //todo... 连接canvasServer,跳转页面
         ServerInfo si;          //存储准备连接的CanvasServer信息

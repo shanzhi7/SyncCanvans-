@@ -41,10 +41,11 @@ private slots:
     void slot_join_clicked();                                               //点击加入房间窗口
     void slot_create_room_finish(std::shared_ptr<RoomInfo> room_info);      //创建房间完成槽函数
     void slot_join_room_finish(std::shared_ptr<RoomInfo> room_info);        //加入房间完成槽函数
+    void slot_load_info();                                                  //登录成功，加载用户信息
 
     void on_upload_btn_clicked();                                           //上传头像按钮槽函数
 
-    void slot_lobby_mod_finish(ReqId reqid,QString res,ErrorCodes err);
+    void slot_lobby_mod_finish(ReqId reqid,QString res,ErrorCodes err);     //http请求完成槽函数
 };
 
 #endif // LOBBYWIDGET_H
